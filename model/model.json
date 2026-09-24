@@ -1,0 +1,3491 @@
+{
+ "params": {
+  "L": 5800,
+  "W": 2200,
+  "roof_L": 6000,
+  "roof_W": 2300,
+  "wall_t": 100,
+  "osb_wall": 9,
+  "base_h": 150,
+  "floor_board": 25,
+  "floor_osb": 12,
+  "clear_h": 2170,
+  "top_plate": 50,
+  "chord_h": 100,
+  "roof_pitch": 20,
+  "block": [
+   400,
+   200,
+   200
+  ],
+  "door": {
+   "x_c": 2900,
+   "w": 960,
+   "h": 2050,
+   "leaf_w": 900,
+   "leaf_h": 2000
+  },
+  "windows": [
+   {
+    "x_c": 1150,
+    "w": 1000,
+    "h": 1000
+   },
+   {
+    "x_c": 4650,
+    "w": 1000,
+    "h": 1000
+   }
+  ],
+  "win_top": 2200,
+  "stud_step": 600,
+  "truss_count": 11
+ },
+ "levels": {
+  "ground": -200,
+  "floor": 187,
+  "ceil": 2357,
+  "plate_top": 2366,
+  "chord_top": 2466,
+  "roof_at_wall": 2617.4,
+  "ridge": 3017.8,
+  "clad_bottom": -40,
+  "clad": 12
+ },
+ "interior": {
+  "x0": 109,
+  "x1": 5691,
+  "y0": 109,
+  "y1": 2091
+ },
+ "elements": [
+  {
+   "id": "block_00",
+   "group": "foundation",
+   "mat": "concrete",
+   "kind": "box",
+   "b": [
+    20.0,
+    -70.0,
+    -200,
+    420.0,
+    170.0,
+    0
+   ],
+   "pos": 1
+  },
+  {
+   "id": "ruberoid_00",
+   "group": "foundation",
+   "mat": "ruberoid",
+   "kind": "box",
+   "b": [
+    20.0,
+    -70.0,
+    -1,
+    420.0,
+    170.0,
+    0
+   ]
+  },
+  {
+   "id": "block_01",
+   "group": "foundation",
+   "mat": "concrete",
+   "kind": "box",
+   "b": [
+    1780.0,
+    -70.0,
+    -200,
+    2180.0,
+    170.0,
+    0
+   ],
+   "pos": 1
+  },
+  {
+   "id": "ruberoid_01",
+   "group": "foundation",
+   "mat": "ruberoid",
+   "kind": "box",
+   "b": [
+    1780.0,
+    -70.0,
+    -1,
+    2180.0,
+    170.0,
+    0
+   ]
+  },
+  {
+   "id": "block_02",
+   "group": "foundation",
+   "mat": "concrete",
+   "kind": "box",
+   "b": [
+    3620.0,
+    -70.0,
+    -200,
+    4020.0,
+    170.0,
+    0
+   ],
+   "pos": 1
+  },
+  {
+   "id": "ruberoid_02",
+   "group": "foundation",
+   "mat": "ruberoid",
+   "kind": "box",
+   "b": [
+    3620.0,
+    -70.0,
+    -1,
+    4020.0,
+    170.0,
+    0
+   ]
+  },
+  {
+   "id": "block_03",
+   "group": "foundation",
+   "mat": "concrete",
+   "kind": "box",
+   "b": [
+    5380.0,
+    -70.0,
+    -200,
+    5780.0,
+    170.0,
+    0
+   ],
+   "pos": 1
+  },
+  {
+   "id": "ruberoid_03",
+   "group": "foundation",
+   "mat": "ruberoid",
+   "kind": "box",
+   "b": [
+    5380.0,
+    -70.0,
+    -1,
+    5780.0,
+    170.0,
+    0
+   ]
+  },
+  {
+   "id": "block_10",
+   "group": "foundation",
+   "mat": "concrete",
+   "kind": "box",
+   "b": [
+    20.0,
+    2030.0,
+    -200,
+    420.0,
+    2270.0,
+    0
+   ],
+   "pos": 1
+  },
+  {
+   "id": "ruberoid_10",
+   "group": "foundation",
+   "mat": "ruberoid",
+   "kind": "box",
+   "b": [
+    20.0,
+    2030.0,
+    -1,
+    420.0,
+    2270.0,
+    0
+   ]
+  },
+  {
+   "id": "block_11",
+   "group": "foundation",
+   "mat": "concrete",
+   "kind": "box",
+   "b": [
+    1780.0,
+    2030.0,
+    -200,
+    2180.0,
+    2270.0,
+    0
+   ],
+   "pos": 1
+  },
+  {
+   "id": "ruberoid_11",
+   "group": "foundation",
+   "mat": "ruberoid",
+   "kind": "box",
+   "b": [
+    1780.0,
+    2030.0,
+    -1,
+    2180.0,
+    2270.0,
+    0
+   ]
+  },
+  {
+   "id": "block_12",
+   "group": "foundation",
+   "mat": "concrete",
+   "kind": "box",
+   "b": [
+    3620.0,
+    2030.0,
+    -200,
+    4020.0,
+    2270.0,
+    0
+   ],
+   "pos": 1
+  },
+  {
+   "id": "ruberoid_12",
+   "group": "foundation",
+   "mat": "ruberoid",
+   "kind": "box",
+   "b": [
+    3620.0,
+    2030.0,
+    -1,
+    4020.0,
+    2270.0,
+    0
+   ]
+  },
+  {
+   "id": "block_13",
+   "group": "foundation",
+   "mat": "concrete",
+   "kind": "box",
+   "b": [
+    5380.0,
+    2030.0,
+    -200,
+    5780.0,
+    2270.0,
+    0
+   ],
+   "pos": 1
+  },
+  {
+   "id": "ruberoid_13",
+   "group": "foundation",
+   "mat": "ruberoid",
+   "kind": "box",
+   "b": [
+    5380.0,
+    2030.0,
+    -1,
+    5780.0,
+    2270.0,
+    0
+   ]
+  },
+  {
+   "id": "base_front",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    0,
+    0,
+    0,
+    5800,
+    100,
+    150
+   ],
+   "pos": 2,
+   "sec": "100x150"
+  },
+  {
+   "id": "base_back",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    0,
+    2100,
+    0,
+    5800,
+    2200,
+    150
+   ],
+   "pos": 2,
+   "sec": "100x150"
+  },
+  {
+   "id": "base_left",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    0,
+    100,
+    0,
+    100,
+    2100,
+    150
+   ],
+   "pos": 2,
+   "sec": "100x150"
+  },
+  {
+   "id": "base_right",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    5700,
+    100,
+    0,
+    5800,
+    2100,
+    150
+   ],
+   "pos": 2,
+   "sec": "100x150"
+  },
+  {
+   "id": "joist_0",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    635.0,
+    100,
+    0,
+    685.0,
+    2100,
+    150
+   ],
+   "pos": 3,
+   "sec": "50x150"
+  },
+  {
+   "id": "joist_1",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    1195.0,
+    100,
+    0,
+    1245.0,
+    2100,
+    150
+   ],
+   "pos": 3,
+   "sec": "50x150"
+  },
+  {
+   "id": "joist_2",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    1755.0,
+    100,
+    0,
+    1805.0,
+    2100,
+    150
+   ],
+   "pos": 3,
+   "sec": "50x150"
+  },
+  {
+   "id": "joist_3",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    2315.0,
+    100,
+    0,
+    2365.0,
+    2100,
+    150
+   ],
+   "pos": 3,
+   "sec": "50x150"
+  },
+  {
+   "id": "joist_4",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    2875.0,
+    100,
+    0,
+    2925.0,
+    2100,
+    150
+   ],
+   "pos": 3,
+   "sec": "50x150"
+  },
+  {
+   "id": "joist_5",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    3435.0,
+    100,
+    0,
+    3485.0,
+    2100,
+    150
+   ],
+   "pos": 3,
+   "sec": "50x150"
+  },
+  {
+   "id": "joist_6",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    3995.0,
+    100,
+    0,
+    4045.0,
+    2100,
+    150
+   ],
+   "pos": 3,
+   "sec": "50x150"
+  },
+  {
+   "id": "joist_7",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    4555.0,
+    100,
+    0,
+    4605.0,
+    2100,
+    150
+   ],
+   "pos": 3,
+   "sec": "50x150"
+  },
+  {
+   "id": "joist_8",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    5115.0,
+    100,
+    0,
+    5165.0,
+    2100,
+    150
+   ],
+   "pos": 3,
+   "sec": "50x150"
+  },
+  {
+   "id": "subfloor",
+   "group": "floor",
+   "mat": "board_rough",
+   "kind": "box",
+   "b": [
+    100,
+    100,
+    20,
+    5700,
+    2100,
+    45
+   ],
+   "pos": 4,
+   "section_only": true
+  },
+  {
+   "id": "ins_floor",
+   "group": "floor",
+   "mat": "insulation",
+   "kind": "box",
+   "b": [
+    100,
+    100,
+    45,
+    5700,
+    2100,
+    150
+   ],
+   "section_only": true
+  },
+  {
+   "id": "floor_board",
+   "group": "floor",
+   "mat": "board",
+   "kind": "box",
+   "b": [
+    100,
+    100,
+    150,
+    5700,
+    2100,
+    175
+   ],
+   "pos": 5
+  },
+  {
+   "id": "floor_osb",
+   "group": "floor",
+   "mat": "osb",
+   "kind": "box",
+   "b": [
+    100,
+    100,
+    175,
+    5700,
+    2100,
+    187
+   ],
+   "pos": 6
+  },
+  {
+   "id": "wf_stud0",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    0,
+    0,
+    150,
+    50,
+    100,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wf_stud1",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    600.0,
+    0,
+    150,
+    650.0,
+    100,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wf_stud2",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    1650.0,
+    0,
+    150,
+    1700.0,
+    100,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wf_stud3",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    2010.0,
+    0,
+    150,
+    2060.0,
+    100,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wf_stud4",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    2370.0,
+    0,
+    150,
+    2420.0,
+    100,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wf_stud5",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    3380.0,
+    0,
+    150,
+    3430.0,
+    100,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wf_stud6",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    3740.0,
+    0,
+    150,
+    3790.0,
+    100,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wf_stud7",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    4100.0,
+    0,
+    150,
+    4150.0,
+    100,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wf_stud8",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    5150.0,
+    0,
+    150,
+    5200.0,
+    100,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wf_stud9",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    5750,
+    0,
+    150,
+    5800,
+    100,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wf_plate",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    0,
+    0,
+    2316,
+    5800,
+    100,
+    2366
+   ],
+   "pos": 8,
+   "sec": "50x100"
+  },
+  {
+   "id": "wf_lintel0",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    2370.0,
+    0,
+    2200,
+    3430.0,
+    100,
+    2300
+   ],
+   "pos": 9,
+   "sec": "2x50x100"
+  },
+  {
+   "id": "wf_lintel1",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    600.0,
+    0,
+    2200,
+    1700.0,
+    100,
+    2300
+   ],
+   "pos": 9,
+   "sec": "2x50x100"
+  },
+  {
+   "id": "wf_sill1",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    650.0,
+    0,
+    1150,
+    1650.0,
+    100,
+    1200
+   ],
+   "pos": 9,
+   "sec": "50x100"
+  },
+  {
+   "id": "wf_lintel2",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    4100.0,
+    0,
+    2200,
+    5200.0,
+    100,
+    2300
+   ],
+   "pos": 9,
+   "sec": "2x50x100"
+  },
+  {
+   "id": "wf_sill2",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    4150.0,
+    0,
+    1150,
+    5150.0,
+    100,
+    1200
+   ],
+   "pos": 9,
+   "sec": "50x100"
+  },
+  {
+   "id": "wb_stud0",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    0,
+    2100,
+    150,
+    50,
+    2200,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wb_stud1",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    575.0,
+    2100,
+    150,
+    625.0,
+    2200,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wb_stud2",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    1150.0,
+    2100,
+    150,
+    1200.0,
+    2200,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wb_stud3",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    1725.0,
+    2100,
+    150,
+    1775.0,
+    2200,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wb_stud4",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    2300.0,
+    2100,
+    150,
+    2350.0,
+    2200,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wb_stud5",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    2875.0,
+    2100,
+    150,
+    2925.0,
+    2200,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wb_stud6",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    3450.0,
+    2100,
+    150,
+    3500.0,
+    2200,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wb_stud7",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    4025.0,
+    2100,
+    150,
+    4075.0,
+    2200,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wb_stud8",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    4600.0,
+    2100,
+    150,
+    4650.0,
+    2200,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wb_stud9",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    5175.0,
+    2100,
+    150,
+    5225.0,
+    2200,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wb_stud10",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    5750,
+    2100,
+    150,
+    5800,
+    2200,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wb_plate",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    0,
+    2100,
+    2316,
+    5800,
+    2200,
+    2366
+   ],
+   "pos": 8,
+   "sec": "50x100"
+  },
+  {
+   "id": "wl_stud0",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    0,
+    100,
+    150,
+    100,
+    150,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wl_stud1",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    0,
+    587.5,
+    150,
+    100,
+    637.5,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wl_stud2",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    0,
+    1075.0,
+    150,
+    100,
+    1125.0,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wl_stud3",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    0,
+    1562.5,
+    150,
+    100,
+    1612.5,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wl_stud4",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    0,
+    2050,
+    150,
+    100,
+    2100,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wl_plate",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    0,
+    100,
+    2316,
+    100,
+    2100,
+    2366
+   ],
+   "pos": 8,
+   "sec": "50x100"
+  },
+  {
+   "id": "wr_stud0",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    5700,
+    100,
+    150,
+    5800,
+    150,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wr_stud1",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    5700,
+    587.5,
+    150,
+    5800,
+    637.5,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wr_stud2",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    5700,
+    1075.0,
+    150,
+    5800,
+    1125.0,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wr_stud3",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    5700,
+    1562.5,
+    150,
+    5800,
+    1612.5,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wr_stud4",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    5700,
+    2050,
+    150,
+    5800,
+    2100,
+    2316
+   ],
+   "pos": 7,
+   "sec": "50x100"
+  },
+  {
+   "id": "wr_plate",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    5700,
+    100,
+    2316,
+    5800,
+    2100,
+    2366
+   ],
+   "pos": 8,
+   "sec": "50x100"
+  },
+  {
+   "id": "br_b1",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    700,
+    2150.0,
+    1250
+   ],
+   "s": [
+    1400,
+    25,
+    100
+   ],
+   "rx": 0.0,
+   "ry": 45,
+   "pos": 10,
+   "sec": "25x100"
+  },
+  {
+   "id": "br_b2",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    5100,
+    2150.0,
+    1250
+   ],
+   "s": [
+    1400,
+    25,
+    100
+   ],
+   "rx": 0.0,
+   "ry": -45,
+   "pos": 10,
+   "sec": "25x100"
+  },
+  {
+   "id": "br_f1",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    330,
+    50.0,
+    1250
+   ],
+   "s": [
+    700,
+    25,
+    100
+   ],
+   "rx": 0.0,
+   "ry": 45,
+   "pos": 10,
+   "sec": "25x100"
+  },
+  {
+   "id": "br_f2",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    5470,
+    50.0,
+    1250
+   ],
+   "s": [
+    700,
+    25,
+    100
+   ],
+   "rx": 0.0,
+   "ry": -45,
+   "pos": 10,
+   "sec": "25x100"
+  },
+  {
+   "id": "br_l1",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    50.0,
+    700,
+    1250
+   ],
+   "s": [
+    25,
+    1000,
+    100
+   ],
+   "rx": -45,
+   "ry": 0.0,
+   "pos": 10,
+   "sec": "25x100"
+  },
+  {
+   "id": "br_l2",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    50.0,
+    1500,
+    1250
+   ],
+   "s": [
+    25,
+    1000,
+    100
+   ],
+   "rx": 45,
+   "ry": 0.0,
+   "pos": 10,
+   "sec": "25x100"
+  },
+  {
+   "id": "br_r1",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    5750.0,
+    700,
+    1250
+   ],
+   "s": [
+    25,
+    1000,
+    100
+   ],
+   "rx": -45,
+   "ry": 0.0,
+   "pos": 10,
+   "sec": "25x100"
+  },
+  {
+   "id": "br_r2",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    5750.0,
+    1500,
+    1250
+   ],
+   "s": [
+    25,
+    1000,
+    100
+   ],
+   "rx": 45,
+   "ry": 0.0,
+   "pos": 10,
+   "sec": "25x100"
+  },
+  {
+   "id": "chord_0",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    0.0,
+    -30.0,
+    2366,
+    50.0,
+    2230.0,
+    2466
+   ],
+   "pos": 11,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_0a",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    25.0,
+    525.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": 20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_0b",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    25.0,
+    1675.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": -20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "kingpost_0",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    0.0,
+    1050.0,
+    2466,
+    50.0,
+    1150.0,
+    2866.4
+   ],
+   "pos": 13,
+   "sec": "50x100"
+  },
+  {
+   "id": "chord_1",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    575.0,
+    -30.0,
+    2366,
+    625.0,
+    2230.0,
+    2466
+   ],
+   "pos": 11,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_1a",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    600.0,
+    525.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": 20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_1b",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    600.0,
+    1675.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": -20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "kingpost_1",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    575.0,
+    1050.0,
+    2466,
+    625.0,
+    1150.0,
+    2866.4
+   ],
+   "pos": 13,
+   "sec": "50x100"
+  },
+  {
+   "id": "chord_2",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    1150.0,
+    -30.0,
+    2366,
+    1200.0,
+    2230.0,
+    2466
+   ],
+   "pos": 11,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_2a",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    1175.0,
+    525.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": 20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_2b",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    1175.0,
+    1675.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": -20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "kingpost_2",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    1150.0,
+    1050.0,
+    2466,
+    1200.0,
+    1150.0,
+    2866.4
+   ],
+   "pos": 13,
+   "sec": "50x100"
+  },
+  {
+   "id": "chord_3",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    1725.0,
+    -30.0,
+    2366,
+    1775.0,
+    2230.0,
+    2466
+   ],
+   "pos": 11,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_3a",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    1750.0,
+    525.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": 20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_3b",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    1750.0,
+    1675.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": -20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "kingpost_3",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    1725.0,
+    1050.0,
+    2466,
+    1775.0,
+    1150.0,
+    2866.4
+   ],
+   "pos": 13,
+   "sec": "50x100"
+  },
+  {
+   "id": "chord_4",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    2300.0,
+    -30.0,
+    2366,
+    2350.0,
+    2230.0,
+    2466
+   ],
+   "pos": 11,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_4a",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    2325.0,
+    525.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": 20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_4b",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    2325.0,
+    1675.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": -20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "kingpost_4",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    2300.0,
+    1050.0,
+    2466,
+    2350.0,
+    1150.0,
+    2866.4
+   ],
+   "pos": 13,
+   "sec": "50x100"
+  },
+  {
+   "id": "chord_5",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    2875.0,
+    -30.0,
+    2366,
+    2925.0,
+    2230.0,
+    2466
+   ],
+   "pos": 11,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_5a",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    2900.0,
+    525.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": 20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_5b",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    2900.0,
+    1675.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": -20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "kingpost_5",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    2875.0,
+    1050.0,
+    2466,
+    2925.0,
+    1150.0,
+    2866.4
+   ],
+   "pos": 13,
+   "sec": "50x100"
+  },
+  {
+   "id": "chord_6",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    3450.0,
+    -30.0,
+    2366,
+    3500.0,
+    2230.0,
+    2466
+   ],
+   "pos": 11,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_6a",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    3475.0,
+    525.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": 20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_6b",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    3475.0,
+    1675.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": -20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "kingpost_6",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    3450.0,
+    1050.0,
+    2466,
+    3500.0,
+    1150.0,
+    2866.4
+   ],
+   "pos": 13,
+   "sec": "50x100"
+  },
+  {
+   "id": "chord_7",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    4025.0,
+    -30.0,
+    2366,
+    4075.0,
+    2230.0,
+    2466
+   ],
+   "pos": 11,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_7a",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    4050.0,
+    525.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": 20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_7b",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    4050.0,
+    1675.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": -20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "kingpost_7",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    4025.0,
+    1050.0,
+    2466,
+    4075.0,
+    1150.0,
+    2866.4
+   ],
+   "pos": 13,
+   "sec": "50x100"
+  },
+  {
+   "id": "chord_8",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    4600.0,
+    -30.0,
+    2366,
+    4650.0,
+    2230.0,
+    2466
+   ],
+   "pos": 11,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_8a",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    4625.0,
+    525.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": 20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_8b",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    4625.0,
+    1675.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": -20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "kingpost_8",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    4600.0,
+    1050.0,
+    2466,
+    4650.0,
+    1150.0,
+    2866.4
+   ],
+   "pos": 13,
+   "sec": "50x100"
+  },
+  {
+   "id": "chord_9",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    5175.0,
+    -30.0,
+    2366,
+    5225.0,
+    2230.0,
+    2466
+   ],
+   "pos": 11,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_9a",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    5200.0,
+    525.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": 20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_9b",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    5200.0,
+    1675.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": -20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "kingpost_9",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    5175.0,
+    1050.0,
+    2466,
+    5225.0,
+    1150.0,
+    2866.4
+   ],
+   "pos": 13,
+   "sec": "50x100"
+  },
+  {
+   "id": "chord_10",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    5750.0,
+    -30.0,
+    2366,
+    5800.0,
+    2230.0,
+    2466
+   ],
+   "pos": 11,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_10a",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    5775.0,
+    525.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": 20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "rafter_10b",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    5775.0,
+    1675.0,
+    2710.3
+   ],
+   "s": [
+    50,
+    1223.8,
+    100
+   ],
+   "rx": -20,
+   "ry": 0.0,
+   "pos": 12,
+   "sec": "50x100"
+  },
+  {
+   "id": "kingpost_10",
+   "group": "frame",
+   "mat": "timber",
+   "kind": "box",
+   "b": [
+    5750.0,
+    1050.0,
+    2466,
+    5800.0,
+    1150.0,
+    2866.4
+   ],
+   "pos": 13,
+   "sec": "50x100"
+  },
+  {
+   "id": "batten_a0",
+   "group": "roof",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    2900.0,
+    6.4,
+    2587.2
+   ],
+   "s": [
+    6000,
+    100,
+    25
+   ],
+   "rx": 20,
+   "ry": 0.0,
+   "pos": 14,
+   "sec": "25x100"
+  },
+  {
+   "id": "batten_a1",
+   "group": "roof",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    2900.0,
+    265.7,
+    2681.6
+   ],
+   "s": [
+    6000,
+    100,
+    25
+   ],
+   "rx": 20,
+   "ry": 0.0,
+   "pos": 14,
+   "sec": "25x100"
+  },
+  {
+   "id": "batten_a2",
+   "group": "roof",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    2900.0,
+    525.0,
+    2776.0
+   ],
+   "s": [
+    6000,
+    100,
+    25
+   ],
+   "rx": 20,
+   "ry": 0.0,
+   "pos": 14,
+   "sec": "25x100"
+  },
+  {
+   "id": "batten_a3",
+   "group": "roof",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    2900.0,
+    784.3,
+    2870.4
+   ],
+   "s": [
+    6000,
+    100,
+    25
+   ],
+   "rx": 20,
+   "ry": 0.0,
+   "pos": 14,
+   "sec": "25x100"
+  },
+  {
+   "id": "batten_a4",
+   "group": "roof",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    2900.0,
+    1043.6,
+    2964.8
+   ],
+   "s": [
+    6000,
+    100,
+    25
+   ],
+   "rx": 20,
+   "ry": 0.0,
+   "pos": 14,
+   "sec": "25x100"
+  },
+  {
+   "id": "batten_b0",
+   "group": "roof",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    2900.0,
+    2193.6,
+    2587.2
+   ],
+   "s": [
+    6000,
+    100,
+    25
+   ],
+   "rx": -20,
+   "ry": 0.0,
+   "pos": 14,
+   "sec": "25x100"
+  },
+  {
+   "id": "batten_b1",
+   "group": "roof",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    2900.0,
+    1934.3,
+    2681.6
+   ],
+   "s": [
+    6000,
+    100,
+    25
+   ],
+   "rx": -20,
+   "ry": 0.0,
+   "pos": 14,
+   "sec": "25x100"
+  },
+  {
+   "id": "batten_b2",
+   "group": "roof",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    2900.0,
+    1675.0,
+    2776.0
+   ],
+   "s": [
+    6000,
+    100,
+    25
+   ],
+   "rx": -20,
+   "ry": 0.0,
+   "pos": 14,
+   "sec": "25x100"
+  },
+  {
+   "id": "batten_b3",
+   "group": "roof",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    2900.0,
+    1415.7,
+    2870.4
+   ],
+   "s": [
+    6000,
+    100,
+    25
+   ],
+   "rx": -20,
+   "ry": 0.0,
+   "pos": 14,
+   "sec": "25x100"
+  },
+  {
+   "id": "batten_b4",
+   "group": "roof",
+   "mat": "timber",
+   "kind": "rbox",
+   "c": [
+    2900.0,
+    1156.4,
+    2964.8
+   ],
+   "s": [
+    6000,
+    100,
+    25
+   ],
+   "rx": -20,
+   "ry": 0.0,
+   "pos": 14,
+   "sec": "25x100"
+  },
+  {
+   "id": "ins_walls_f",
+   "group": "insulation",
+   "mat": "insulation",
+   "kind": "box",
+   "b": [
+    100,
+    0,
+    150,
+    5700,
+    100,
+    2316
+   ],
+   "section_only": true
+  },
+  {
+   "id": "ins_ceiling",
+   "group": "insulation",
+   "mat": "insulation",
+   "kind": "box",
+   "b": [
+    100,
+    100,
+    2366,
+    5700,
+    2100,
+    2466
+   ],
+   "section_only": true
+  },
+  {
+   "id": "osb_back",
+   "group": "finish",
+   "mat": "osb",
+   "kind": "box",
+   "b": [
+    109,
+    2091,
+    187,
+    5691,
+    2100,
+    2357
+   ],
+   "pos": 16
+  },
+  {
+   "id": "osb_front",
+   "group": "finish",
+   "mat": "osb",
+   "kind": "box",
+   "b": [
+    109,
+    100,
+    187,
+    5691,
+    109,
+    2357
+   ],
+   "pos": 16,
+   "holes": [
+    [
+     2420.0,
+     187,
+     3380.0,
+     2200
+    ],
+    [
+     650.0,
+     1200,
+     1650.0,
+     2200
+    ],
+    [
+     4150.0,
+     1200,
+     5150.0,
+     2200
+    ]
+   ]
+  },
+  {
+   "id": "osb_left",
+   "group": "finish",
+   "mat": "osb",
+   "kind": "box",
+   "b": [
+    100,
+    100,
+    187,
+    109,
+    2100,
+    2357
+   ],
+   "pos": 16
+  },
+  {
+   "id": "osb_right",
+   "group": "finish",
+   "mat": "osb",
+   "kind": "box",
+   "b": [
+    5691,
+    100,
+    187,
+    5700,
+    2100,
+    2357
+   ],
+   "pos": 16
+  },
+  {
+   "id": "osb_ceiling",
+   "group": "finish",
+   "mat": "osb",
+   "kind": "box",
+   "b": [
+    100,
+    100,
+    2357,
+    5700,
+    2100,
+    2366
+   ],
+   "pos": 16
+  },
+  {
+   "id": "clad_front",
+   "group": "cladding",
+   "kind": "item",
+   "type": "wall_sheet",
+   "face": "front",
+   "x0": -12,
+   "x1": 5812,
+   "y": -12,
+   "z0": -40,
+   "z1": 2568.1,
+   "holes": [
+    [
+     2420.0,
+     150,
+     3380.0,
+     2200
+    ],
+    [
+     650.0,
+     1200,
+     1650.0,
+     2200
+    ],
+    [
+     4150.0,
+     1200,
+     5150.0,
+     2200
+    ]
+   ],
+   "pos": 17
+  },
+  {
+   "id": "clad_back",
+   "group": "cladding",
+   "kind": "item",
+   "type": "wall_sheet",
+   "face": "back",
+   "x0": -12,
+   "x1": 5812,
+   "y": 2212,
+   "z0": -40,
+   "z1": 2568.1,
+   "holes": [],
+   "pos": 17
+  },
+  {
+   "id": "clad_left",
+   "group": "cladding",
+   "kind": "item",
+   "type": "gable_sheet",
+   "face": "left",
+   "x": -12,
+   "y0": -12,
+   "y1": 2212,
+   "z0": -40,
+   "z1": 2466,
+   "pos": 17
+  },
+  {
+   "id": "clad_right",
+   "group": "cladding",
+   "kind": "item",
+   "type": "gable_sheet",
+   "face": "right",
+   "x": 5812,
+   "y0": -12,
+   "y1": 2212,
+   "z0": -40,
+   "z1": 2466,
+   "pos": 17
+  },
+  {
+   "id": "roof_sheet",
+   "group": "roof",
+   "kind": "item",
+   "type": "roof_sheet",
+   "x0": -100.0,
+   "x1": 5900.0,
+   "y0": -50.0,
+   "y1": 2250.0,
+   "ridge_y": 1100.0,
+   "ridge_z": 3017.785034940414,
+   "pitch": 20,
+   "t": 20,
+   "pos": 15
+  },
+  {
+   "id": "window_0",
+   "group": "opening",
+   "kind": "item",
+   "type": "window",
+   "x0": 650.0,
+   "x1": 1650.0,
+   "z0": 1200,
+   "z1": 2200,
+   "y0": -12,
+   "y1": 100,
+   "pos": 18,
+   "name": "Окно ПВХ 1000x1000 поворотно-откидное"
+  },
+  {
+   "id": "window_1",
+   "group": "opening",
+   "kind": "item",
+   "type": "window",
+   "x0": 4150.0,
+   "x1": 5150.0,
+   "z0": 1200,
+   "z1": 2200,
+   "y0": -12,
+   "y1": 100,
+   "pos": 18,
+   "name": "Окно ПВХ 1000x1000 поворотно-откидное"
+  },
+  {
+   "id": "door",
+   "group": "opening",
+   "kind": "item",
+   "type": "door",
+   "x0": 2420.0,
+   "x1": 3380.0,
+   "z0": 150,
+   "z1": 2200,
+   "y0": -12,
+   "y1": 100,
+   "leaf_w": 900,
+   "leaf_h": 2000,
+   "pos": 19,
+   "name": "Дверь металлическая 2050x960"
+  },
+  {
+   "id": "step_landing",
+   "group": "site",
+   "mat": "deck",
+   "kind": "box",
+   "b": [
+    2250,
+    -462,
+    -200,
+    3550,
+    -12,
+    140
+   ],
+   "pos": 20
+  },
+  {
+   "id": "step_1",
+   "group": "site",
+   "mat": "deck",
+   "kind": "box",
+   "b": [
+    2250,
+    -762,
+    -200,
+    3550,
+    -462,
+    -35.0
+   ],
+   "pos": 20
+  },
+  {
+   "id": "bench_leg0",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    139,
+    149,
+    187,
+    189,
+    199,
+    1047
+   ],
+   "pos": 21
+  },
+  {
+   "id": "bench_leg1",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    2029,
+    149,
+    187,
+    2079,
+    199,
+    1047
+   ],
+   "pos": 21
+  },
+  {
+   "id": "bench_leg2",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    139,
+    669,
+    187,
+    189,
+    719,
+    1047
+   ],
+   "pos": 21
+  },
+  {
+   "id": "bench_leg3",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    2029,
+    669,
+    187,
+    2079,
+    719,
+    1047
+   ],
+   "pos": 21
+  },
+  {
+   "id": "bench_leg4",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    1084.0,
+    669,
+    187,
+    1134.0,
+    719,
+    1047
+   ],
+   "pos": 21
+  },
+  {
+   "id": "bench_leg5",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    1084.0,
+    149,
+    187,
+    1134.0,
+    199,
+    1047
+   ],
+   "pos": 21
+  },
+  {
+   "id": "bench_apron_f",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    139,
+    669,
+    947,
+    2079,
+    719,
+    1047
+   ],
+   "pos": 21
+  },
+  {
+   "id": "bench_apron_b",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    139,
+    149,
+    947,
+    2079,
+    199,
+    1047
+   ],
+   "pos": 21
+  },
+  {
+   "id": "bench_top",
+   "group": "equip",
+   "mat": "plywood",
+   "kind": "box",
+   "b": [
+    109,
+    109,
+    1047,
+    2109,
+    759,
+    1087
+   ],
+   "pos": 21
+  },
+  {
+   "id": "bench_shelf",
+   "group": "equip",
+   "mat": "osb",
+   "kind": "box",
+   "b": [
+    139,
+    149,
+    367,
+    2079,
+    719,
+    385
+   ],
+   "pos": 21
+  },
+  {
+   "id": "bench_backboard",
+   "group": "equip",
+   "mat": "plywood",
+   "kind": "box",
+   "b": [
+    109,
+    109,
+    1087,
+    2109,
+    127,
+    1187
+   ],
+   "pos": 21
+  },
+  {
+   "id": "vise",
+   "group": "equip",
+   "kind": "item",
+   "type": "vise",
+   "x": 1849,
+   "y": 759,
+   "z": 1087,
+   "pos": 22,
+   "name": "Тиски слесарные 125 мм"
+  },
+  {
+   "id": "bench_stuff",
+   "group": "equip",
+   "kind": "item",
+   "type": "bench_stuff",
+   "x0": 109,
+   "x1": 2109,
+   "y0": 109,
+   "y1": 759,
+   "z": 1087
+  },
+  {
+   "id": "bench_drawers",
+   "group": "equip",
+   "kind": "item",
+   "type": "drawer_unit",
+   "x0": 199,
+   "x1": 699,
+   "y0": 199,
+   "y1": 669,
+   "z0": 385,
+   "z1": 947,
+   "pos": 23,
+   "name": "Тумба-кассетница под верстаком"
+  },
+  {
+   "id": "pegboard",
+   "group": "equip",
+   "kind": "item",
+   "type": "pegboard",
+   "x": 109,
+   "y0": 809,
+   "y1": 1559,
+   "z0": 1137,
+   "z1": 2137,
+   "pos": 24,
+   "name": "Перфопанель 750x1000 с крючками"
+  },
+  {
+   "id": "rack_post00",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    109,
+    1591,
+    187,
+    159,
+    1641,
+    2287
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_post01",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    109,
+    2041,
+    187,
+    159,
+    2091,
+    2287
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_post10",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    1084,
+    1591,
+    187,
+    1134,
+    1641,
+    2287
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_post11",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    1084,
+    2041,
+    187,
+    1134,
+    2091,
+    2287
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_post20",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    2084,
+    1591,
+    187,
+    2134,
+    1641,
+    2287
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_post21",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    2084,
+    2041,
+    187,
+    2134,
+    2091,
+    2287
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_post30",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    3059,
+    1591,
+    187,
+    3109,
+    1641,
+    2287
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_post31",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    3059,
+    2041,
+    187,
+    3109,
+    2091,
+    2287
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_shelf0",
+   "group": "equip",
+   "mat": "osb",
+   "kind": "box",
+   "b": [
+    109,
+    1591,
+    337,
+    3109,
+    2091,
+    355
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_rail0f",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    109,
+    1591,
+    287,
+    3109,
+    1616,
+    337
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_rail0b",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    109,
+    2066,
+    287,
+    3109,
+    2091,
+    337
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_shelf1",
+   "group": "equip",
+   "mat": "osb",
+   "kind": "box",
+   "b": [
+    109,
+    1591,
+    787,
+    3109,
+    2091,
+    805
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_rail1f",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    109,
+    1591,
+    737,
+    3109,
+    1616,
+    787
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_rail1b",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    109,
+    2066,
+    737,
+    3109,
+    2091,
+    787
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_shelf2",
+   "group": "equip",
+   "mat": "osb",
+   "kind": "box",
+   "b": [
+    109,
+    1591,
+    1237,
+    3109,
+    2091,
+    1255
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_rail2f",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    109,
+    1591,
+    1187,
+    3109,
+    1616,
+    1237
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_rail2b",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    109,
+    2066,
+    1187,
+    3109,
+    2091,
+    1237
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_shelf3",
+   "group": "equip",
+   "mat": "osb",
+   "kind": "box",
+   "b": [
+    109,
+    1591,
+    1687,
+    3109,
+    2091,
+    1705
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_rail3f",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    109,
+    1591,
+    1637,
+    3109,
+    1616,
+    1687
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_rail3b",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    109,
+    2066,
+    1637,
+    3109,
+    2091,
+    1687
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_shelf4",
+   "group": "equip",
+   "mat": "osb",
+   "kind": "box",
+   "b": [
+    109,
+    1591,
+    2137,
+    3109,
+    2091,
+    2155
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_rail4f",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    109,
+    1591,
+    2087,
+    3109,
+    1616,
+    2137
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_rail4b",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    109,
+    2066,
+    2087,
+    3109,
+    2091,
+    2137
+   ],
+   "pos": 25
+  },
+  {
+   "id": "rack_stuff",
+   "group": "equip",
+   "kind": "item",
+   "type": "rack_stuff",
+   "x0": 109,
+   "x1": 3109,
+   "y0": 1591,
+   "y1": 2091,
+   "levels": [
+    355,
+    805,
+    1255,
+    1705,
+    2155
+   ],
+   "seps": [
+    134,
+    1109,
+    2109,
+    3084
+   ]
+  },
+  {
+   "id": "toolrail0",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    3259,
+    2066,
+    1437,
+    5631,
+    2091,
+    1537
+   ],
+   "pos": 26
+  },
+  {
+   "id": "toolrail1",
+   "group": "equip",
+   "mat": "wood",
+   "kind": "box",
+   "b": [
+    3259,
+    2066,
+    1837,
+    5631,
+    2091,
+    1937
+   ],
+   "pos": 26
+  },
+  {
+   "id": "tool_wall",
+   "group": "equip",
+   "kind": "item",
+   "type": "tool_wall",
+   "x0": 3379,
+   "x1": 5511,
+   "y": 2066,
+   "z_hook": 1887,
+   "tools": [
+    "shovel",
+    "shovel2",
+    "fork",
+    "rake",
+    "rake_fan",
+    "hoe",
+    "broom",
+    "scoop",
+    "pruner",
+    "axe",
+    "sledge",
+    "crowbar"
+   ],
+   "pos": 26,
+   "name": "Инструментальная стена: 2 рейки + 12 держателей"
+  },
+  {
+   "id": "antresol",
+   "group": "equip",
+   "mat": "osb",
+   "kind": "box",
+   "b": [
+    3259,
+    1691,
+    2087,
+    5631,
+    2091,
+    2105
+   ],
+   "pos": 27
+  },
+  {
+   "id": "antresol_brackets",
+   "group": "equip",
+   "kind": "item",
+   "type": "brackets",
+   "x0": 3259,
+   "x1": 5631,
+   "y0": 1691,
+   "y1": 2091,
+   "z": 2087,
+   "count": 5
+  },
+  {
+   "id": "antresol_stuff",
+   "group": "equip",
+   "kind": "item",
+   "type": "shelf_stuff",
+   "x0": 3259,
+   "x1": 5631,
+   "y0": 1691,
+   "y1": 2091,
+   "z": 2105,
+   "hmax": 210,
+   "seed": 7
+  },
+  {
+   "id": "gsm_shelf0",
+   "group": "equip",
+   "mat": "osb",
+   "kind": "box",
+   "b": [
+    3440.0,
+    109,
+    1437,
+    4090.0,
+    389,
+    1455
+   ],
+   "pos": 28
+  },
+  {
+   "id": "gsm_br0",
+   "group": "equip",
+   "kind": "item",
+   "type": "brackets",
+   "x0": 3440.0,
+   "x1": 4090.0,
+   "y0": 109,
+   "y1": 389,
+   "z": 1437,
+   "count": 2,
+   "wall": "front"
+  },
+  {
+   "id": "gsm_stuff0",
+   "group": "equip",
+   "kind": "bottles",
+   "type": "shelf_stuff",
+   "x0": 3440.0,
+   "x1": 4090.0,
+   "y0": 109,
+   "y1": 389,
+   "z": 1455,
+   "hmax": 300,
+   "seed": 11
+  },
+  {
+   "id": "gsm_shelf1",
+   "group": "equip",
+   "mat": "osb",
+   "kind": "box",
+   "b": [
+    3440.0,
+    109,
+    1837,
+    4090.0,
+    389,
+    1855
+   ],
+   "pos": 28
+  },
+  {
+   "id": "gsm_br1",
+   "group": "equip",
+   "kind": "item",
+   "type": "brackets",
+   "x0": 3440.0,
+   "x1": 4090.0,
+   "y0": 109,
+   "y1": 389,
+   "z": 1837,
+   "count": 2,
+   "wall": "front"
+  },
+  {
+   "id": "gsm_stuff1",
+   "group": "equip",
+   "kind": "bottles",
+   "type": "shelf_stuff",
+   "x0": 3440.0,
+   "x1": 4090.0,
+   "y0": 109,
+   "y1": 389,
+   "z": 1855,
+   "hmax": 300,
+   "seed": 12
+  },
+  {
+   "id": "hooks_right",
+   "group": "equip",
+   "kind": "item",
+   "type": "hook_wall",
+   "x": 5691,
+   "y0": 359,
+   "y1": 1641,
+   "z": 1737,
+   "pos": 29,
+   "name": "Крючки для шланга, удлинителя, триммера"
+  },
+  {
+   "id": "mower",
+   "group": "equip",
+   "kind": "item",
+   "type": "mower",
+   "x": 3700,
+   "y": 189,
+   "z": 187,
+   "pos": 30,
+   "name": "Газонокосилка (место)"
+  },
+  {
+   "id": "tiller",
+   "group": "equip",
+   "kind": "item",
+   "type": "tiller",
+   "x": 4380,
+   "y": 189,
+   "z": 187,
+   "pos": 31,
+   "name": "Мотоблок / культиватор (место)"
+  },
+  {
+   "id": "barrow",
+   "group": "equip",
+   "kind": "item",
+   "type": "barrow",
+   "x": 5130,
+   "y": 189,
+   "z": 187,
+   "pos": 32,
+   "name": "Садовая тачка (место)"
+  },
+  {
+   "id": "canisters",
+   "group": "equip",
+   "kind": "item",
+   "type": "canisters",
+   "x": 3470.0,
+   "y": 129,
+   "z": 187,
+   "pos": 28
+  },
+  {
+   "id": "floor_mat",
+   "group": "equip",
+   "kind": "item",
+   "type": "floor_mat",
+   "x0": 3560,
+   "x1": 5691,
+   "y0": 109,
+   "y1": 1459,
+   "z": 187,
+   "pos": 33,
+   "name": "Резиновый коврик под технику"
+  },
+  {
+   "id": "lamp0",
+   "group": "equip",
+   "kind": "item",
+   "type": "lamp",
+   "x": 1400,
+   "y": 1100.0,
+   "z": 2357,
+   "pos": 34
+  },
+  {
+   "id": "lamp1",
+   "group": "equip",
+   "kind": "item",
+   "type": "lamp",
+   "x": 4400,
+   "y": 1100.0,
+   "z": 2357,
+   "pos": 34
+  }
+ ]
+}
