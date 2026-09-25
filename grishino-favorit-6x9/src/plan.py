@@ -9,6 +9,8 @@ PLAN_CSS = '''
 .winw{fill:#FFFFFF;stroke:#1E2528;stroke-width:.02} .winnew{fill:#FFFFFF;stroke:#1D5FA0;stroke-width:.05}
 .dsw{fill:none;stroke:#565C61;stroke-width:.02} .dnew{fill:none;stroke:#1D5FA0;stroke-width:.035} .partn{fill:#1D5FA0}
 .fx{fill:#FFFFFF;stroke:#1E2528;stroke-width:.025} .post2{fill:#1E2528} .stair{fill:none;stroke:#565C61;stroke-width:.02}
+.dim{stroke:#565C61;stroke-width:.015} .dimt{stroke:#1E2528;stroke-width:.025}
+svg .tdc{font-size:.19px;font-family:'IBM Plex Mono',monospace;fill:#1E2528} svg .tdk{font-size:.19px;font-family:'IBM Plex Mono',monospace;fill:#7A3E1D;font-weight:600}
 '''
 def _doors(s):
     def door_v(x, ya, yb, right=True, c='dsw', hinge_top=True):
@@ -43,7 +45,7 @@ def floor1(s, fixtures=True, porch=True):
     for k in range(2, 9):
         x, y, w, h = R(ROOMS[k][:4]); s.rect(x, y, w, h, cls.get(k, 'roomf'))
     door_v, door_h = _doors(s); win_v, win_h = _win(s)
-    door_h(2.073, 3.15, 4.05, down=False)                              # Д-1 с террасы
+    door_h(2.073, 3.1, 4.0, down=False)                                # Д-1 с террасы (по эскизу: 990 + 1 020 + 1 090 от оси А)
     door_v(5.927, DOOR_IN[0]-15, DOOR_IN[1]-15, right=True, c='dnew')  # новая входная дверь к калитке
     door_h(3.548, 3.22, 4.1, down=True)                                # прихожая → холл 4
     door_v(4.468, 4.47, 5.25, right=True)                              # санузел

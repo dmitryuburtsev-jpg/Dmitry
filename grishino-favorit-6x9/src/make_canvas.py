@@ -12,7 +12,7 @@ rows = [(['Main.dc.html', 'Visual.dc.html', 'Fence.dc.html'], [-400, 1520, 3040]
         (['Budget.dc.html', 'Gazebo.dc.html', 'House.dc.html'], [0, 1520, 3040]),
         (['Bath.dc.html', 'Gas.dc.html', 'Check.dc.html'], [0, 1520, 3040])]
 titles = {k: v.get('title') for k, v in c['boards'].items()}
-titles['House.dc.html'] = 'Дом каркасный 9,0×11,5'; titles['Check.dc.html'] = 'Проверка сетей'
+titles['House.dc.html'] = 'Дом каркасный 6,0×9,0'; titles['Check.dc.html'] = 'Проверка сетей'
 boards = {}; y = 0
 for names, xs in rows:
     for n, x in zip(names, xs):

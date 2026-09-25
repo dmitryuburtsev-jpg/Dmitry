@@ -130,5 +130,18 @@ class Svg:
             self.text(x1-off, my, label, cls+' mid', rot=-90)
         else:
             self.text(mx, my-off, label, cls+' mid')
+    def chain(self, pts, pos, horizontal=True, tick=0.08, cls='tdc', off=0.05, min_label=0.25):
+        """Цепочка размеров: pts — координаты точек вдоль линии, pos — положение линии; подписи в мм."""
+        pts = sorted(pts)
+        if horizontal:
+            self.line(pts[0], pos, pts[-1], pos, 'dim')
+            for x in pts: self.line(x-tick, pos+tick, x+tick, pos-tick, 'dimt')
+            for a, b in zip(pts, pts[1:]):
+                if b - a >= min_label: self.text((a+b)/2, pos-off, fmt(round((b-a)*1000)), cls+' mid')
+        else:
+            self.line(pos, pts[0], pos, pts[-1], 'dim')
+            for y in pts: self.line(pos-tick, y+tick, pos+tick, y-tick, 'dimt')
+            for a, b in zip(pts, pts[1:]):
+                if b - a >= min_label: self.text(pos-off, (a+b)/2, fmt(round((b-a)*1000)), cls+' mid', rot=-90)
     def svg(self, w, h, vb, style='background: #FBF9F4; border: 1px solid #D6CEBF'):
         return f'<svg width="{w}" height="{h}" viewBox="{vb}" style="{style}">' + ''.join(self.e) + '</svg>'

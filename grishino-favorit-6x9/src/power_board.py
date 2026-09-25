@@ -42,4 +42,40 @@ items = [
 tbl, total = spec_table(items, 'Итого электроснабжение участка')
 s = re.sub(r'(Спецификация</h2>\n)<table class="tb">.*?</table>', lambda m: m.group(1) + tbl, s, flags=re.S)
 assert fmt(total) in s
+# трассы кабелей по участкам
+def inside(pt, poly):
+    x, y = pt; c = False
+    for (x1, y1), (x2, y2) in zip(poly, poly[1:] + poly[:1]):
+        if (y1 > y) != (y2 > y) and x < x1 + (y - y1)*(x2 - x1)/(y2 - y1): c = not c
+    return c
+def where(pt):
+    return 'подполье' if inside(pt, HEATED) else ('под террасой' if inside(pt, TERRACE) else 'траншея')
+def pieces(route):
+    out = []
+    for a, b in zip(route, route[1:]):
+        l = L([a, b]); n = max(1, int(l/0.05))
+        for i in range(n):
+            p0 = (a[0]+(b[0]-a[0])*(i+0.5)/n, a[1]+(b[1]-a[1])*(i+0.5)/n); w_ = where(p0)
+            if out and out[-1][0] == w_: out[-1][1] += l/n
+            else: out.append([w_, l/n])
+    return out
+routes = [('ВРУ → ЩР-Д', 'ВРУ', EL['ВРУ→ЩР-Д'], vru_l),
+          ('QD1 баня', 'ЩР-Д', EL['магистраль'] + EL['баня'][1:], Ls['QD1']),
+          ('QD2 беседка', 'ЩР-Д', EL['магистраль'] + EL['беседка'][1:], Ls['QD2']),
+          ('QD3 хозблок', 'ЩР-Д', EL['магистраль'] + EL['хозблок'][1:], Ls['QD3']),
+          ('QD4 насос', 'ЩР-Д', EL['насос'], Ls['QD4']),
+          ('QD5 ЛОС', 'ЩР-Д', EL['ЛОС'], Ls['QD5'])]
+rt = []
+for n, frm, r, cab in routes:
+    ps = ' + '.join(f'{w_} {fmt(l, 1)}' for w_, l in pieces(r) if l >= 0.05)
+    rt.append(f'<tr><td>{n}</td><td>{ps}</td><td class="r">{fmt(L(r), 1)}</td><td class="r">{cab}</td></tr>')
+route_html = ('<h2 class="hd" style="margin: 10px 0 0; font-size: 17px; font-weight: 600">Кабельные трассы по участкам, м</h2>'
+    '<table class="tb"><thead><tr><th>Линия</th><th>Участки: где проложен и длина</th><th class="r">Трасса</th><th class="r">Кабель</th></tr></thead><tbody>' + ''.join(rt) + '</tbody></table>'
+    f'<div style="font-size: 12px; line-height: 1.45; color: #565C61">Кабель = трасса + {fmt(EXTRA, 0)} м. Привязки: ВРУ — на уличной границе, ось x = {fmt(VRU[0], 2)} (пролёт 13,5–15,75); '
+    f'ЩР-Д — в холле 7 на перегородке кухни-гостиной, x = {fmt(SHRD[0], 2)}, {fmt(Y3 - SHRD[1], 2)} м от уличного торца; магистраль к постройкам — под полом по x = {fmt(TRX, 2)} '
+    f'({fmt(TRX - HX0, 2)} м от левой стены, посередине между сваями), выход в грунт через садовый торец левее террасы, от дома до развилки у беседки — {fmt(Y2 - 10.4, 1)} м; '
+    f'кабельные траншеи всего {fmt(EL_TRENCH, 1)} м (общие участки считаются один раз).</div>')
+i = s.find('Не входит: плата за технологическое присоединение'); j = s.rfind('<div', 0, i)
+s = s[:j] + route_html + s[j:]
+s = s.replace('height: 1400px', 'height: 1480px').replace('"height": 1400', '"height": 1480')
 write('Power.dc.html', s); open('power_total.txt', 'w').write(str(total)); print('power', total, Ls, vru_l)

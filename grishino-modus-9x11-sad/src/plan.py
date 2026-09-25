@@ -9,6 +9,8 @@ PLAN_CSS = '''
 .winw{fill:#FFFFFF;stroke:#1E2528;stroke-width:.02} .winnew{fill:#FFFFFF;stroke:#1D5FA0;stroke-width:.05}
 .dsw{fill:none;stroke:#565C61;stroke-width:.02} .dnew{fill:none;stroke:#1D5FA0;stroke-width:.035} .partn{fill:#1D5FA0}
 .fx{fill:#FFFFFF;stroke:#1E2528;stroke-width:.025} .post2{fill:#1E2528}
+.dim{stroke:#565C61;stroke-width:.015} .dimt{stroke:#1E2528;stroke-width:.025}
+svg .tdc{font-size:.19px;font-family:'IBM Plex Mono',monospace;fill:#1E2528} svg .tdk{font-size:.19px;font-family:'IBM Plex Mono',monospace;fill:#7A3E1D;font-weight:600}
 '''
 def base(s, fixtures=True, porch=True):
     s.pg([U(p) for p in TERRACE], 'terf')
@@ -41,7 +43,7 @@ def base(s, fixtures=True, porch=True):
     door_h(9.405, 7.9, 8.76, down=False, c='dnew', hinge_left=False)    # котельная → прихожая
     door_v(5.305, 8.4, 9.2, right=True, c='dnew')                        # прихожая ↔ холл (новая)
     door_v(9.0, DOOR_IN[0]-14.5, DOOR_IN[1]-14.5, right=True, c='dnew') # входная дверь, наружу к калитке
-    door_h(2.573, 3.65, 4.51, down=False)                                # выход на террасу
+    door_h(2.573, 3.75, 4.65, down=False)                                # выход на террасу (по эскизу: 150 + 900 от оси 2)
     def win_v(x, ya, yb, c='winw'): s.rect(x-0.075, ya, 0.15, yb-ya, c); s.line(x, ya, x, yb, 'dsw')
     def win_h(y, xa, xb, c='winw'): s.rect(xa, y-0.075, xb-xa, 0.15, c); s.line(xa, y, xb, y, 'dsw')
     win_v(0.074, 9.06, 10.1); win_v(0.074, 5.86, 6.9); win_v(8.926, 5.86, 6.9); win_h(1.574, 1.28, 2.32)
