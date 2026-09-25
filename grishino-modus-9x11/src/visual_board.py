@@ -20,13 +20,13 @@ def shift(el, dx):
     return re.sub(r'points="([^"]+)"', lambda m: 'points="' + ' '.join('%.1f,%.1f' % (float(a)+DX, float(b)+DY) for a, b in (p.split(',') for p in m.group(1).split())) + '"', el)
 st_path = style(5); st_k1 = style(12); st_k1n = style(15); st_v1 = style(16); st_v1b = style(18); st_el = style(19); st_g = style(24); st_kk = style(25)
 out = full[0:3] + [rect_g((11.5, 1, 11, 10.8), style(3)), full[4]]
-for r in [(18, 26.5, 1, 5.5), (18.9, 7.6, 1.2, 18.9), (20.1, 7.6, 6.2, 1.2), (9.7, 12.3, 9.2, 1.2), (9.7, 3.6, 1.2, 8.7), (3.4, 3.6, 6.3, 1.2), (12.45, 26.5, 6.45, 1.0)]:
+for r in [(18, 24.4, 1, 7.6), (18.9, 7.6, 1.2, 18.9), (20.1, 7.6, 6.2, 1.2), (9.7, 12.3, 9.2, 1.2), (9.7, 3.6, 1.2, 8.7), (3.4, 3.6, 6.3, 1.2), (12.45, 13.5, 3.2, 0.5)]:
     out.append(rect_g(r, st_path))
 for k in k1: out.append(pl(k1[k], st_k1))
 out.append(pl([(2.6, 30.5), (2.6, 32.6)], st_k1n))
 out += [pl(V1 + V1_UNDER[1:], st_v1), pl(V1_NEIGH, st_v1), pl(V1_BATH, st_v1b)]
 for k in ('ВРУ→ЩР-Д', 'магистраль', 'баня', 'беседка', 'хозблок', 'ЛОС'): out.append(pl(EL[k], st_el))
-out.append(pl([(SHRD[0], 22.9), (SHRD[0], 21.0), (18.0, 21.0)], st_el))
+out.append(pl(EL['насос'][:3], st_el))
 out.append(pl(G1, st_g)); out.append(pl(G1_FACADE, st_g.replace('stroke-width: 2.6', 'stroke-width: 1.6; stroke-dasharray: 5 3')))
 for (cx, cy) in KK.values():
     X, Y = P(cx, cy)
@@ -44,7 +44,7 @@ for n, (x, y) in pos.items():
 out += mk
 s = s[:i] + head + ''.join(out) + '</svg>' + s[j:]
 tot = int(open('site_total.txt').read())
-for a, b in [('Дом 85 м²: вход и крыльцо со стороны калитки, терраса в сад', 'Дом каркасный 9,0×11,5 м, 94,7 м²: вход с террасы со стороны калитки'),
+for a, b in [('Дом 85 м²: вход и крыльцо со стороны калитки, терраса в сад', 'Дом каркасный 9,0×11,5 м, 94,7 м²: терраса в сад, вход со стороны калитки'),
              ('153,1 м²', '171,5 м²'), ('12\u00a0444\u00a0556 ₽', fmt(tot).replace(' ', '\u00a0') + ' ₽')]:
     assert a in s, a
     s = s.replace(a, b)

@@ -9,6 +9,7 @@ for (const f of files) {
   let s = fs.readFileSync(dir+'/'+f,'utf8');
   s = s.replace('<script src="./support.js"></script>','').replace(/<\/?x-dc>/g,'').replace(/<helmet>/,'').replace(/<\/helmet>/,'');
   const m = s.match(/"\$preview":\s*\{"width":\s*(\d+),\s*"height":\s*(\d+)/);
+  if (!m) continue;
   const w=+m[1], h=+m[2];
   const p = await b.newPage({viewport:{width:w,height:h}, deviceScaleFactor: +(process.env.SCALE||1)});
   await p.setContent(s, {waitUntil:'networkidle', timeout:15000}).catch(()=>{});

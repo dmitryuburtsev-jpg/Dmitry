@@ -5,7 +5,8 @@ c = json.load(open(os.path.join(HERE, 'original', 'canvas.json')))
 H = {}
 for f in os.listdir(PRJ):
     if f.endswith('.dc.html'):
-        m = re.search(r'"\$preview": \{"width": (\d+), "height": (\d+)', open(os.path.join(PRJ, f)).read()); H[f] = (int(m.group(1)), int(m.group(2)))
+        m = re.search(r'"\$preview": \{"width": (\d+), "height": (\d+)', open(os.path.join(PRJ, f)).read())
+        if m: H[f] = (int(m.group(1)), int(m.group(2)))
 rows = [(['Main.dc.html', 'Visual.dc.html', 'Fence.dc.html'], [-400, 1520, 3040]),
         (['Sewer.dc.html', 'Water.dc.html', 'Power.dc.html'], [0, 1520, 3040]),
         (['Budget.dc.html', 'Gazebo.dc.html', 'House.dc.html'], [0, 1520, 3040]),
@@ -17,6 +18,11 @@ for names, xs in rows:
     for n, x in zip(names, xs):
         w, h = H[n]; boards[n] = {'x': x, 'y': y, 'w': w, 'h': h, 'title': titles[n]}
     y += max(H[n][1] for n in names) + 120
+cur = os.path.join(PRJ, 'canvas.json')
+if os.path.exists(cur):   # холст уже есть: сохраняем его ключи и чужие рамки, меняем только раскладку листов
+    new = json.load(open(cur))
+    for n, e in boards.items(): new['boards'].setdefault(n, {}).update(e)
+    json.dump(new, open(cur, 'w'), ensure_ascii=False, indent=2); raise SystemExit
 new = {'v': 3, 'createdOnFiles': {'v': 1, 'at': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
        'title': 'Гришино-Модус 9х11', 'launch': {'view': 'canvas'}, 'pages': [], 'boards': boards,
        'order': c['order'] + ['Check.dc.html'],
