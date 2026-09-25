@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Сводная смета</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+
+body{margin:0;background:#F3EFE6;color:#1E2528;font-family:'IBM Plex Sans',system-ui,sans-serif}
+a{color:#1D5FA0}a:hover{color:#123F6B}
+.hd{font-family:'IBM Plex Sans Condensed',sans-serif}
+.mono{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+table.tb{border-collapse:collapse;width:100%;font-size:12.5px;line-height:1.35}
+table.tb th{font:600 10.5px/1.3 'IBM Plex Sans Condensed',sans-serif;text-transform:uppercase;letter-spacing:.05em;color:#565C61;text-align:left;padding:5px 7px;border-bottom:1.5px solid #1E2528}
+table.tb td{padding:4px 7px;border-bottom:1px solid #D6CEBF;vertical-align:top}
+table.tb .r{text-align:right;white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:12px}
+table.tb tr.grp td{font:600 12px 'IBM Plex Sans Condensed',sans-serif;text-transform:uppercase;letter-spacing:.04em;padding-top:10px;border-bottom:1.5px solid #1E2528}
+table.tb tr.sum td{font-weight:600;border-bottom:1.5px solid #1E2528}
+table.tb tr.tot td{font-weight:700;font-size:14px;border-top:2px solid #1E2528;border-bottom:none;padding-top:8px}
+.ok{color:#2F6B2F;font-weight:600}
+.warn{color:#9A5B00;font-weight:600}
+.ph{background:#F7E7B4;padding:0 3px;border-radius:2px}
+svg text{font-family:'IBM Plex Sans Condensed',sans-serif;fill:#1E2528}
+svg .mid{text-anchor:middle}
+svg .end{text-anchor:end}
+svg .mu{fill:#565C61}
+svg .b{font-weight:600}
+
+
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; box-sizing: border-box; padding: 36px 40px; display: flex; flex-direction: column; gap: 20px; background: #F3EFE6">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; border-bottom: 2px solid #1E2528; padding-bottom: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div class="hd" style="font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: #565C61">Гришино-Модус 9х11 · д. Гришино · КН 50:31:0010104:5239</div>
+<h1 class="hd" style="margin: 0; font-size: 34px; font-weight: 700; line-height: 1.05">Сводная смета и порядок работ</h1>
+<div style="font-size: 13.5px; color: #565C61">Цены ориентировочные: розница и работы Московской обл., сентябрь 2026.</div>
+</div>
+<div class="hd" style="font-size: 44px; font-weight: 700; color: #1E2528; line-height: 1">06</div>
+</div>
+<div style="display: flex; gap: 40px; flex-grow: 1; min-height: 0">
+<div style="display: flex; flex-direction: column; gap: 14px; width: 780px; flex-shrink: 0">
+<div style="display: flex; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 14px 18px; background: #1E2528; color: #F3EFE6; flex-grow: 1">
+<div class="mono" style="font-size: 34px; font-weight: 500">11 367 455 ₽</div>
+<div style="font-size: 12.5px">участок под ключ: дом, баня, беседка, хозблок, забор, сети, скважина, ЛОС, электричество, газ</div>
+</div>
+</div>
+<table class="tb"><thead><tr><th>№</th><th>Раздел</th><th>Где</th><th class="r">Сумма, ₽</th></tr></thead><tbody><tr><td>1</td><td>Забор из профлиста с воротами и калиткой</td><td>лист 02</td><td class="r">640 904</td></tr><tr><td>2</td><td>Канализация под домом и баней, наружная К1</td><td>лист 03</td><td class="r">174 760</td></tr><tr><td>3</td><td>ЛОС и выпуск очищенной воды в кювет</td><td>лист 04</td><td class="r">224 840</td></tr><tr><td>4</td><td>Скважина, кессон, насос, водопровод в дом и баню</td><td>лист 04</td><td class="r">544 300</td></tr><tr><td>5</td><td>Электроснабжение участка: ввод, щиты, линии к постройкам</td><td>лист 05</td><td class="r">344 540</td></tr><tr><td>6</td><td>Хозблок 6,0×2,3 м с наполнением (готовая смета)</td><td>репозиторий</td><td class="r">385 334</td></tr><tr><td>7</td><td>Беседка 5×4 м на винтовых сваях</td><td>лист 07</td><td class="r">399 270</td></tr><tr><td>8</td><td>Дом каркасный 9,0×11,5 м под ключ по эскизу заказчика (ориентир)</td><td>лист 08</td><td class="r">5 440 600</td></tr><tr><td>9</td><td>Баня 5,7×6 м под ключ (ориентир)</td><td>лист 09</td><td class="r">2 311 000</td></tr><tr><td>10</td><td>Газоснабжение: шкаф на границе, Г1, ввод по стене, котельная, дымоход, вентиляция</td><td>лист 10</td><td class="r">360 600</td></tr><tr class="sum"><td></td><td>Итого по позициям 1–10</td><td></td><td class="r">10 826 148</td></tr><tr><td></td><td>Непредвиденные расходы 5 %</td><td></td><td class="r">541 307</td></tr><tr class="tot"><td></td><td>Всего по участку</td><td></td><td class="r">11 367 455</td></tr></tbody></table>
+<div style="display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; line-height: 1.45">
+<div class="hd" style="font-size: 15px; font-weight: 600">Не входит в сумму</div>
+<div>Водоподготовка (подбирается по анализу, ориентир 80–120 тыс. ₽), плата за техприсоединение по договору с Россети, плата за подключение газа до границы (0 ₽ по догазификации), благоустройство (дорожки, стоянка, газон), привод откатных ворот.</div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px; flex-grow: 1; min-width: 0">
+<h2 class="hd" style="margin: 0; font-size: 17px; font-weight: 600">Порядок работ</h2>
+<div style="display: flex; gap: 14px"><div class="mono" style="font-size: 20px; font-weight: 500; width: 28px; flex-shrink: 0">1</div><div style="display: flex; flex-direction: column; gap: 2px"><div style="font-weight: 600; font-size: 14px">Геодезия</div><div style="font-size: 12.5px; line-height: 1.45; color: #565C61">Вынос границ н1–н4 в натуру, топосъёмка с отметками. Заявка на техприсоединение 15 кВт в Россети, запрос в Мособлгаз о газе в Гришино.</div></div></div><div style="display: flex; gap: 14px"><div class="mono" style="font-size: 20px; font-weight: 500; width: 28px; flex-shrink: 0">2</div><div style="display: flex; flex-direction: column; gap: 2px"><div style="font-weight: 600; font-size: 14px">Скважина</div><div style="font-size: 12.5px; line-height: 1.45; color: #565C61">Соглашение с соседом, бурение у правой границы и кессон с отводом к соседу — пока участок открыт для техники. Анализ воды.</div></div></div><div style="display: flex; gap: 14px"><div class="mono" style="font-size: 20px; font-weight: 500; width: 28px; flex-shrink: 0">3</div><div style="display: flex; flex-direction: column; gap: 2px"><div style="font-weight: 600; font-size: 14px">Ввод электричества</div><div style="font-size: 12.5px; line-height: 1.45; color: #565C61">Шкаф учёта на границе в пролёте 13,5–15,75 м (не у калитки — там газовый шкаф), временный щит для стройки.</div></div></div><div style="display: flex; gap: 14px"><div class="mono" style="font-size: 20px; font-weight: 500; width: 28px; flex-shrink: 0">4</div><div style="display: flex; flex-direction: column; gap: 2px"><div style="font-weight: 600; font-size: 14px">Забор и ворота</div><div style="font-size: 12.5px; line-height: 1.45; color: #565C61">Столбы, лаги, профлист. Ворота — после проезда тяжёлой техники.</div></div></div><div style="display: flex; gap: 14px"><div class="mono" style="font-size: 20px; font-weight: 500; width: 28px; flex-shrink: 0">5</div><div style="display: flex; flex-direction: column; gap: 2px"><div style="font-weight: 600; font-size: 14px">Сваи дома, плита бани</div><div style="font-size: 12.5px; line-height: 1.45; color: #565C61">Винтовые сваи дома (34 + 4 под ступени) и обвязка; под УШП бани закладываются К1 и В1, затем плита заливается.</div></div></div><div style="display: flex; gap: 14px"><div class="mono" style="font-size: 20px; font-weight: 500; width: 28px; flex-shrink: 0">6</div><div style="display: flex; flex-direction: column; gap: 2px"><div style="font-weight: 600; font-size: 14px">Каркас дома</div><div style="font-size: 12.5px; line-height: 1.45; color: #565C61">Каркас, кровля, контур; котельная сразу с окном, дверью 0,86 и потолком 2,5 м; утеплённый цоколь с гильзами под В1, К1, газ и кабели.</div></div></div><div style="display: flex; gap: 14px"><div class="mono" style="font-size: 20px; font-weight: 500; width: 28px; flex-shrink: 0">7</div><div style="display: flex; flex-direction: column; gap: 2px"><div style="font-weight: 600; font-size: 14px">ЛОС и наружная К1</div><div style="font-size: 12.5px; line-height: 1.45; color: #565C61">Котлован, ЛОС, колодцы КК-1, КК-2, КК-3, КК-4, КК-Б (линия бани — строго в 3,0 м от дома), выпуск под террасой с греющим кабелем, напорная линия в кювет.</div></div></div><div style="display: flex; gap: 14px"><div class="mono" style="font-size: 20px; font-weight: 500; width: 28px; flex-shrink: 0">8</div><div style="display: flex; flex-direction: column; gap: 2px"><div style="font-weight: 600; font-size: 14px">Кабели и В1 в баню</div><div style="font-size: 12.5px; line-height: 1.45; color: #565C61">Траншеи 0,7 м по генплану, кабели в гофре, водопровод с греющим кабелем.</div></div></div><div style="display: flex; gap: 14px"><div class="mono" style="font-size: 20px; font-weight: 500; width: 28px; flex-shrink: 0">9</div><div style="display: flex; flex-direction: column; gap: 2px"><div style="font-weight: 600; font-size: 14px">Постройки</div><div style="font-size: 12.5px; line-height: 1.45; color: #565C61">Хозблок по проекту, беседка на винтовых сваях (лист 07), подключение щитов и замеры ЭТЛ.</div></div></div><div style="display: flex; gap: 14px"><div class="mono" style="font-size: 20px; font-weight: 500; width: 28px; flex-shrink: 0">10</div><div style="display: flex; flex-direction: column; gap: 2px"><div style="font-weight: 600; font-size: 14px">Газ</div><div style="font-size: 12.5px; line-height: 1.45; color: #565C61">После регистрации дома — заявка на догазификацию, ТУ и проект. Траншея Г1 от ШГ к правой стене — вместе с магистралью К1 КК-2 → КК-4, до дорожек; надземный участок по стене — после обшивки фасада (лист 10).</div></div></div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview": {"width": 1440, "height": 1000}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

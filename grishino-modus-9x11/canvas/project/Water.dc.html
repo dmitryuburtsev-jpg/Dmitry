@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Скважина и септик</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+
+body{margin:0;background:#F3EFE6;color:#1E2528;font-family:'IBM Plex Sans',system-ui,sans-serif}
+a{color:#1D5FA0}a:hover{color:#123F6B}
+.hd{font-family:'IBM Plex Sans Condensed',sans-serif}
+.mono{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+table.tb{border-collapse:collapse;width:100%;font-size:12.5px;line-height:1.35}
+table.tb th{font:600 10.5px/1.3 'IBM Plex Sans Condensed',sans-serif;text-transform:uppercase;letter-spacing:.05em;color:#565C61;text-align:left;padding:5px 7px;border-bottom:1.5px solid #1E2528}
+table.tb td{padding:4px 7px;border-bottom:1px solid #D6CEBF;vertical-align:top}
+table.tb .r{text-align:right;white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:12px}
+table.tb tr.grp td{font:600 12px 'IBM Plex Sans Condensed',sans-serif;text-transform:uppercase;letter-spacing:.04em;padding-top:10px;border-bottom:1.5px solid #1E2528}
+table.tb tr.sum td{font-weight:600;border-bottom:1.5px solid #1E2528}
+table.tb tr.tot td{font-weight:700;font-size:14px;border-top:2px solid #1E2528;border-bottom:none;padding-top:8px}
+.ok{color:#2F6B2F;font-weight:600}
+.warn{color:#9A5B00;font-weight:600}
+.ph{background:#F7E7B4;padding:0 3px;border-radius:2px}
+svg text{font-family:'IBM Plex Sans Condensed',sans-serif;fill:#1E2528}
+svg .mid{text-anchor:middle}
+svg .end{text-anchor:end}
+svg .mu{fill:#565C61}
+svg .b{font-weight:600}
+
+
+.soil2{fill:#EDE6D8} .lime{fill:#D8D2C2} .gnd{stroke:#1E2528;stroke-width:1.5}
+.cas{fill:#FBF9F4;stroke:#1E2528;stroke-width:1.5} .casing{fill:#FFFFFF;stroke:#1E2528;stroke-width:1.2}
+.pump{fill:#1D5FA0} .wline{fill:none;stroke:#1D5FA0;stroke-width:3} .wlev{stroke:#1D5FA0;stroke-width:1;stroke-dasharray:5 3}
+.brk{fill:#F3EFE6;stroke:#1E2528;stroke-width:1}
+.losb{fill:#FBF9F4;stroke:#7A3E1D;stroke-width:1.8} .losi{stroke:#7A3E1D;stroke-width:1;stroke-dasharray:4 3}
+.kline{fill:none;stroke:#7A3E1D;stroke-width:3} .knl{fill:none;stroke:#7A3E1D;stroke-width:2;stroke-dasharray:5 4}
+.ring{fill:#E3DDD0;stroke:#1E2528;stroke-width:1.2} .grav{fill:#B9B09E}
+.eline{fill:none;stroke:#C45F08;stroke-width:1.5;stroke-dasharray:8 3 2 3}
+svg .pt{font-size:11.5px} svg .pm{font-size:11px;font-family:'IBM Plex Mono',monospace} svg .pb{font-size:13px;font-weight:600}
+
+</style>
+</helmet>
+<div style="width: 1440px; height: 1720px; box-sizing: border-box; padding: 36px 40px; display: flex; flex-direction: column; gap: 20px; background: #F3EFE6">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; border-bottom: 2px solid #1E2528; padding-bottom: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div class="hd" style="font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: #565C61">Гришино-Модус 9х11 · д. Гришино · КН 50:31:0010104:5239</div>
+<h1 class="hd" style="margin: 0; font-size: 34px; font-weight: 700; line-height: 1.05">Скважина и септик</h1>
+<div style="font-size: 13.5px; color: #565C61">Скважина на известняк в кессоне, водопровод в дом и баню. Станция биоочистки (ЛОС) с отводом очищенной воды в кювет.</div>
+</div>
+<div class="hd" style="font-size: 44px; font-weight: 700; color: #1E2528; line-height: 1">04</div>
+</div>
+<div style="display: flex; gap: 28px; flex-grow: 1; min-height: 0">
+<div style="display: flex; flex-direction: column; gap: 12px; width: 440px; flex-shrink: 0">
+<h2 class="hd" style="margin: 0; font-size: 17px; font-weight: 600">Скважина · разрез (схема)</h2>
+<svg width="440" height="490" viewBox="0 0 440 490" style="background: #FBF9F4; border: 1px solid #D6CEBF"><rect class="soil2" x="0" y="60" width="440" height="430"></rect><rect class="lime" x="0" y="330" width="440" height="160"></rect><line class="gnd" x1="0" y1="60" x2="440" y2="60"></line><rect class="cas" x="120" y="45.0" width="60.0" height="135.0"></rect><rect class="cas" x="135" y="33.0" width="30.0" height="12.0"></rect><rect class="casing" x="143" y="96.0" width="14" height="354.0"></rect><polyline class="wline" points="150,114.0 150,138.0 175,138.0 175,168.0 430,168.0"></polyline><text class="pt" x="200" y="160.0" style="fill: #1D5FA0">В1 ПНД Ø32 → котельная дома и к соседу, −1,80</text><polyline class="eline" points="162,120.0 182,120.0 182,180.0 430,180.0"></polyline><text class="pt" x="200" y="195.0" style="fill: #9A4A06">кабель насоса в гильзе → ЩР-Д</text><polygon class="brk" points="0,250 440,250 440,262 0,262"></polygon><polyline fill="none" stroke="#1E2528" stroke-width="1" points="0,250 200,250 208,242 216,270 224,250 440,250"></polyline><polyline fill="none" stroke="#1E2528" stroke-width="1" points="0,262 200,262 208,254 216,282 224,262 440,262"></polyline><line class="wlev" x1="100" y1="300" x2="200" y2="300"></line><text class="pt" x="210" y="304" style="fill: #1D5FA0">статический уровень [по паспорту]</text><rect class="pump" x="144" y="380" width="12" height="36"></rect><text class="pt" x="210" y="400">насос Grundfos SQ 5-70 (на два дома)</text><text class="pt" x="210" y="345">кровля известняка ≈ −35…−45 м</text><text class="pt" x="210" y="445">ствол в известняке до ≈ −55 м</text><line x1="150" y1="96.0" x2="150" y2="380" stroke="#1D5FA0" stroke-width="2"></line><text class="pt" x="200" y="54.0">кессон 1,0×2,0 м, утеплённая крышка</text><text class="pt" x="200" y="105.0">оголовок, кран, обратный клапан</text><text class="pt" x="200" y="228">обсадка: сталь Ø133</text><text class="pm" x="10" y="52">±0,00</text><text class="pm" x="10" y="184.0">−2,00</text></svg>
+<div style="display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; line-height: 1.45">
+<div>1. Глубину и водоносный горизонт уточняет буровая по соседним скважинам в Гришино. Для Чеховского района типичен известняк на 40–60 м.</div>
+<div>2. Скважина — в кессоне у правой границы, в 1,0 м от забора: общая с соседом. От оголовка в кессоне два выхода: наш — ПНД Ø32 в котельную дома, соседский — ПНД Ø32 в гильзе под забором, со своим краном и счётчиком. Насос на два дома — 5 м³/ч. Нужно письменное соглашение о совместном пользовании и долях расходов (обычно 50/50); соседский септик — тоже не ближе 20 м от скважины. Буровая заезжает через ворота вдоль правой границы.</div>
+<div>3. Траншея В1 от кессона идёт прямо к правой стене дома (12,5 м), ввод в подполье — в 6,5 м от тыльной оси Г; дальше ≈ 5,5 м по утеплённому подполью в котельную (пом. 7 у тыльной стены). Автоматика и гидроаккумулятор — в котельной, до санузла и кухни 1–3 м. Под линией канализации бани (у КК-1) В1 проходит в стальном футляре по 5 м в обе стороны: водопровод глубже канализации. Водоподготовку (обезжелезивание, умягчение) подбирают по анализу воды, в итог она не включена.</div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px; flex-grow: 1; min-width: 0">
+<h2 class="hd" style="margin: 0; font-size: 17px; font-weight: 600">ЛОС · разрез (схема)</h2>
+<div style="display: flex; gap: 20px; align-items: flex-start">
+<svg width="560" height="330.0" viewBox="0 0 560 330.0" style="background: #FBF9F4; border: 1px solid #D6CEBF"><rect class="soil2" x="0" y="50" width="560" height="250.0"></rect><line class="gnd" x1="0" y1="50" x2="560" y2="50"></line><rect class="losb" x="180" y="38.0" width="88.0" height="211.20000000000002"></rect><line class="losi" x1="202.4" y1="58.0" x2="202.4" y2="234.0"></line><line class="losi" x1="228.0" y1="58.0" x2="228.0" y2="234.0"></line><line class="losi" x1="248.0" y1="58.0" x2="248.0" y2="234.0"></line><polyline class="kline" points="10,151.15433749111745 180,160.75433749111744"></polyline><text class="pt" x="10" y="141.15433749111745" style="fill: #7A3E1D">К1 Ø110 от КК-3, лоток −1,39</text><polyline class="knl" points="268.0,94.0 400,94.0 400,114.0 550,114.0"></polyline><text class="pt" x="276.0" y="86.0" style="fill: #7A3E1D">К1Н ПНД Ø32 → кювет (≈ 2 м)</text><text class="pb" x="180" y="28.0">ЛОС · 1,1×1,2 м, H ≈ 2,6 м</text><text class="pt" x="184" y="279.20000000000005">приёмная камера · аэротенк · отстойник · стабилизатор ила</text><polyline class="eline" points="10,78.0 180,78.0"></polyline><text class="pt" x="10" y="94.0" style="fill: #9A4A06">питание ВБбШв 3×1,5 от ЩР-Д</text><text class="pm" x="276.0" y="44">±0,00</text></svg>
+<div style="display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; line-height: 1.45; flex-grow: 1">
+<div class="hd" style="font-size: 15px; font-weight: 600">Почему ЛОС, а не накопитель</div>
+<div>Дом и баня дают около 0,8 м³ стоков в сутки. Накопительную ёмкость 8 м³ пришлось бы откачивать раз в 1–2 недели. ЛОС на 5 человек (1,0 м³/сут, залповый сброс 250 л) очищает воду на 95–98 %, ил откачивается раз в 3–6 месяцев собственным насосом станции.</div>
+<div>ЛОС стоит у улицы слева от калитки, в 1,5 м от забора: к ней подъезжает ассенизатор, а очищенная вода уходит в придорожный кювет коротким выпуском (по согласованию с администрацией). До скважины — 29,8 м, до фундамента дома — 6,7 м (угол дома на прежнем месте).</div>
+<div>Электропитание: 220 В, ≈ 1,5 кВт·ч/сут. Нужен свободный доступ к крышке для обслуживания.</div>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h2 class="hd" style="margin: 0; font-size: 17px; font-weight: 600">Спецификация: вода</h2>
+<table class="tb"><thead><tr><th>№</th><th>Наименование</th><th>Ед.</th><th class="r">Кол-во</th><th class="r">Цена, ₽</th><th class="r">Сумма, ₽</th></tr></thead><tbody><tr><td>1</td><td>Бурение скважины на известняк ≈ 55 м с обсадкой сталь Ø133 [метраж по факту]</td><td>м</td><td class="r">55</td><td class="r">3 700</td><td class="r">203 500</td></tr><tr><td>2</td><td>Кессон пластиковый 1,0×2,0 м с горловиной</td><td>шт</td><td class="r">1</td><td class="r">42 000</td><td class="r">42 000</td></tr><tr><td>3</td><td>Обустройство: монтаж кессона, оголовок, запорная арматура, выход трубы</td><td>компл</td><td class="r">1</td><td class="r">38 000</td><td class="r">38 000</td></tr><tr><td>4</td><td>Насос скважинный Grundfos SQ 5-70 (или аналог), 5 м³/ч — на два дома</td><td>шт</td><td class="r">1</td><td class="r">128 000</td><td class="r">128 000</td></tr><tr><td>5</td><td>Отвод к соседу: тройник и кран в кессоне, счётчик воды, ПНД Ø32 в гильзе под забором</td><td>компл</td><td class="r">1</td><td class="r">9 500</td><td class="r">9 500</td></tr><tr><td>6</td><td>Кабель насоса 4×1,5, трос из нержавеющей стали, хомуты, 60 м</td><td>компл</td><td class="r">1</td><td class="r">12 000</td><td class="r">12 000</td></tr><tr><td>7</td><td>Гидроаккумулятор 100 л, реле давления, манометр, пятивыводник, фильтр</td><td>компл</td><td class="r">1</td><td class="r">18 500</td><td class="r">18 500</td></tr><tr><td>8</td><td>Труба ПНД Ø32 PN16: кессон → ввод в подполье (13 м) + по подполью до котельной (6 м) в утеплении с греющим кабелем</td><td>компл</td><td class="r">1</td><td class="r">11 000</td><td class="r">11 000</td></tr><tr><td>9</td><td>Траншея В1 глубиной 1,8 м, 13 м</td><td>м</td><td class="r">13</td><td class="r">1 400</td><td class="r">18 200</td></tr><tr><td>10</td><td>Футляр стальной Ø89×3,5 на пересечении В1 с К1 бани у КК-1, 10 м (по 5 м в обе стороны), с герметизацией торцов</td><td>м</td><td class="r">10</td><td class="r">950</td><td class="r">9 500</td></tr><tr><td>11</td><td>В1 в баню: ПНД Ø25 в скорлупе ППУ + саморегулирующийся кабель 16 Вт/м, 17 м</td><td>компл</td><td class="r">1</td><td class="r">35 000</td><td class="r">35 000</td></tr><tr><td>12</td><td>Траншея В1 в баню глубиной 0,6 м, 14 м, с монтажом</td><td>м</td><td class="r">14</td><td class="r">900</td><td class="r">12 600</td></tr><tr><td>13</td><td>Анализ воды: химический и микробиологический</td><td>шт</td><td class="r">1</td><td class="r">6 500</td><td class="r">6 500</td></tr><tr class="tot"><td></td><td>Итого скважина и водоснабжение</td><td></td><td class="r"></td><td class="r"></td><td class="r">544 300</td></tr></tbody></table>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h2 class="hd" style="margin: 0; font-size: 17px; font-weight: 600">Спецификация: ЛОС</h2>
+<table class="tb"><thead><tr><th>№</th><th>Наименование</th><th>Ед.</th><th class="r">Кол-во</th><th class="r">Цена, ₽</th><th class="r">Сумма, ₽</th></tr></thead><tbody><tr><td>1</td><td>ЛОС Юнилос Астра 5 Лонг Пр (или аналог; глубокий вход до 1,4 м, принудительный отвод)</td><td>шт</td><td class="r">1</td><td class="r">165 000</td><td class="r">165 000</td></tr><tr><td>2</td><td>Монтаж ЛОС: котлован, песчаная подушка, обсыпка, подключение</td><td>компл</td><td class="r">1</td><td class="r">48 000</td><td class="r">48 000</td></tr><tr><td>3</td><td>Напорный трубопровод ПНД Ø32 до кювета, 6 м</td><td>м</td><td class="r">6</td><td class="r">90,0</td><td class="r">540</td></tr><tr><td>4</td><td>Траншея под К1Н глубиной 0,8 м с уклоном к кювету (опорожняется)</td><td>м</td><td class="r">4</td><td class="r">450</td><td class="r">1 800</td></tr><tr><td>5</td><td>Оголовок выпуска: лоток, бетонная подушка, обратный клапан</td><td>компл</td><td class="r">1</td><td class="r">9 500</td><td class="r">9 500</td></tr><tr class="tot"><td></td><td>Итого ЛОС и отвод очищенной воды</td><td></td><td class="r"></td><td class="r"></td><td class="r">224 840</td></tr></tbody></table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview": {"width": 1440, "height": 1720}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
