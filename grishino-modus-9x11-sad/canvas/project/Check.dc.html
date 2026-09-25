@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Проверка сетей</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+
+
+body{margin:0;background:#F3EFE6;color:#1E2528;font-family:'IBM Plex Sans',system-ui,sans-serif}
+a{color:#1D5FA0}a:hover{color:#123F6B}
+.hd{font-family:'IBM Plex Sans Condensed',sans-serif}
+.mono{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+table.tb{border-collapse:collapse;width:100%;font-size:12.5px;line-height:1.35}
+table.tb th{font:600 10.5px/1.3 'IBM Plex Sans Condensed',sans-serif;text-transform:uppercase;letter-spacing:.05em;color:#565C61;text-align:left;padding:5px 7px;border-bottom:1.5px solid #1E2528}
+table.tb td{padding:4px 7px;border-bottom:1px solid #D6CEBF;vertical-align:top}
+table.tb .r{text-align:right;white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:12px}
+table.tb tr.grp td{font:600 12px 'IBM Plex Sans Condensed',sans-serif;text-transform:uppercase;letter-spacing:.04em;padding-top:10px;border-bottom:1.5px solid #1E2528}
+table.tb tr.sum td{font-weight:600;border-bottom:1.5px solid #1E2528}
+table.tb tr.tot td{font-weight:700;font-size:14px;border-top:2px solid #1E2528;border-bottom:none;padding-top:8px}
+.ok{color:#2F6B2F;font-weight:600}
+.warn{color:#9A5B00;font-weight:600}
+.ph{background:#F7E7B4;padding:0 3px;border-radius:2px}
+svg text{font-family:'IBM Plex Sans Condensed',sans-serif;fill:#1E2528}
+svg .mid{text-anchor:middle}
+svg .end{text-anchor:end}
+svg .mu{fill:#565C61}
+svg .b{font-weight:600}
+
+.bad{color:#B3261E;font-weight:600}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1200px; box-sizing: border-box; padding: 36px 40px; display: flex; flex-direction: column; gap: 20px; background: #F3EFE6">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; border-bottom: 2px solid #1E2528; padding-bottom: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div class="hd" style="font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: #565C61">Гришино-Модус 9х11 · терраса в сад · д. Гришино · КН 50:31:0010104:5239</div>
+<h1 class="hd" style="margin: 0; font-size: 34px; font-weight: 700; line-height: 1.05">Проверка сетей под новый дом</h1>
+<div style="font-size: 13.5px; color: #565C61">Дом 9,0×11,5 развёрнут: терраса в сад, вход со стороны калитки. Что изменилось в сетях, какие ошибки найдены и исправлены, что остаётся решить.</div>
+</div>
+<div class="hd" style="font-size: 44px; font-weight: 700; color: #1E2528; line-height: 1">11</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: #1E2528; color: #F3EFE6"><div class="mono" style="font-size: 26px; font-weight: 500">11 412 857 ₽</div><div style="font-size: 12px">смета участка (было 12 444 556 ₽)</div></div>
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: #FBF9F4; border: 1px solid #D6CEBF"><div class="mono" style="font-size: 26px; font-weight: 500">7</div><div style="font-size: 12px; color: #565C61">ошибок прежних вариантов исправлено</div></div>
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: #FBF9F4; border: 1px solid #D6CEBF"><div class="mono" style="font-size: 26px; font-weight: 500">3</div><div style="font-size: 12px; color: #565C61">доработки эскиза по котельной: окно, дверь, потолок</div></div>
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: #FBF9F4; border: 1px solid #D6CEBF"><div class="mono" style="font-size: 26px; font-weight: 500">46 / 5,8 / 12,5 м</div><div style="font-size: 12px; color: #565C61">К1 / Г1 под землёй / траншея В1</div></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px"><h2 class="hd" style="margin: 0; font-size: 17px; font-weight: 600">Разворот дома — что изменилось</h2><table class="tb"><thead><tr><th>Сеть / объект</th><th>Было (терраса к улице)</th><th>Стало (терраса в сад, вход от калитки)</th></tr></thead><tbody><tr><td>Дом</td><td>терраса и вход с неё — к улице; санузел и котельная — у тыльной стены</td><td>развёрнут и отзеркален: терраса в сад, спальни слева; справа, у дорожки от калитки — прихожая 5,6 м² с входной дверью и крыльцом, кухня-гостиная 17,5 м², котельная и санузел — у уличного фасада</td></tr><tr><td>Канализация К1</td><td>коллектор ≈ 11 м под холлом, выпуск под террасой 6,0 м до КК-4 с греющим кабелем 3,5 м</td><td>коллектор ≈ 5 м, выпуск через уличную стену 3,5 м до КК-4; вход в ЛОС −1,39</td></tr><tr><td>Водопровод В1</td><td>по подполью 5,5 м к котельной у тыльной стены</td><td>траншея та же (12,5 м), по подполью 4,3 м к котельной у уличного фасада</td></tr><tr><td>Газ Г1</td><td>под землёй 13,6 м в обход дома + 8,0 м по правой стене</td><td>по прямой 5,8 м от ШГ к уличному фасаду + стояк 1,5 м; ввод прямо в котельную</td></tr><tr><td>Электрика</td><td>ЩР-Д в холле; кабели к постройкам выходят у тыльной стены</td><td>ЩР-Д в прихожей; ввод от ВРУ через уличную стену; кабели к постройкам — под террасой в сад</td></tr><tr><td>Дорожки</td><td>дорожка перед домом к ступеням у улицы</td><td>дорожка от калитки к крыльцу у правой стены; ступени террасы — к садовой дорожке</td></tr><tr><td>Смета участка</td><td>11 367 455 ₽ (терраса к улице)</td><td>11 412 857 ₽ (было 12 444 556 ₽ с модульным домом)</td></tr></tbody></table></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><h2 class="hd" style="margin: 0; font-size: 17px; font-weight: 600">Ошибки прежних вариантов — исправлены</h2><table class="tb"><thead><tr><th>Что было не так</th><th>Требование</th><th>Как исправлено</th></tr></thead><tbody><tr><td>Линия К1 бани (КК-1 → КК-2) шла в 1,6 м от фундамента дома</td><td>норма 3,0 м, СП 42.13330, табл. 12.6</td><td>трасса на x = 21,0 — ровно 3,0 м</td></tr><tr><td>Кабель к ЛОС пересекал выпуск К1 дома у фасада с зазором ≈ 0,07 м</td><td>ПУЭ 2.3: ≥ 0,5 м, в трубе ≥ 0,25 м</td><td>кабель ЛОС выходит из подполья с левой стороны дома и К1 не пересекает</td></tr><tr><td>Кабель бани пересекал К1 бани у КК-Б с зазором ≈ 0,05 м (труба на −0,65, кабель на −0,70)</td><td>ПУЭ 2.3: в трубе ≥ 0,25 м</td><td>кабель на пересечении заглублён до −0,95 в гофре на 4 м — 0,30 м</td></tr><tr><td>Длины кабелей в таблице линий на 3–4 м больше, чем «трасса + 3,5 м», которые указаны в примечании</td><td>ΔU и спецификация считаются от длины</td><td>длина = трасса по генплану + 6 м для всех линий; ΔU пересчитано</td></tr><tr><td>Стальной футляр на пересечении В1 с К1 есть в тексте, но не в спецификации</td><td>—</td><td>добавлен в смету воды: 10 м, 9 500 ₽</td></tr><tr><td>Траншея К1 в смете «глубиной до 1,1 м», а у ЛОС лоток −1,38</td><td>глубина траншеи = лоток + постель</td><td>в смете траншея 0,8–1,5 м</td></tr><tr><td>Скважина — ЛОС: в проверке 29,0 м</td><td>по координатам генплана</td><td>29,8 м</td></tr></tbody></table></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><h2 class="hd" style="margin: 0; font-size: 17px; font-weight: 600">Осталось решить</h2><table class="tb"><thead><tr><th>Вопрос</th><th>Что сделать</th></tr></thead><tbody><tr><td>Зеркальный план</td><td>исполнитель строит план эскиза зеркально (терраса в сад, кухня и вход справа) и выгораживает прихожую 5,6 м² из кухни-гостиной — согласовать с ним и с заказчиком.</td></tr><tr><td>Назначение помещений</td><td>в эскизе все подписаны «Комната». Принято: 6 — санузел, 7 — котельная, 8 — кухня-гостиная, 9 — прихожая. Подтвердить у заказчика.</td></tr><tr><td>Котельная (пом. 7)</td><td>в эскизе нет окна, дверь 660 мм, потолок до 2,3 м. Для газового котла нужны окно 0,6×0,8, дверь ≥ 0,8, высота ≥ 2,5 — передать исполнителю до начала работ (лист 10).</td></tr><tr><td>Разбивка К1 бани</td><td>трасса КК-1 — КК-2 одновременно в 3,0 м от дома и в 10,0 м от скважины, до свай крыльца — 2,0 м. Выносить геодезистом вместе с домом и крыльцом.</td></tr><tr><td>Вход в ЛОС</td><td>−1,39 при пределе «Лонг» −1,40. При монтаже уклон 0,02 не завышать; если выйдет глубже — исполнение «Супер Лонг».</td></tr><tr><td>ТУ Мособлгаза</td><td>место ШГ (левее калитки, прямо против котельной), давление в сети, котёл в котельной 2,8×1,9.</td></tr><tr><td>ПЗЗ и цена дома</td><td>зона и процент застройки (16,7 %) — по градплану; 5 528 600 ₽ за дом — ориентир, заменить сметой исполнителя.</td></tr></tbody></table></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview": {"width": 1440, "height": 1200}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
