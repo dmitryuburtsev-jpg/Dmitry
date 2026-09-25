@@ -14,6 +14,7 @@ changed = [
     ('Смета участка', '11 367 455 ₽ (терраса к улице)', f'{fmt(T["site"])} ₽ (было 12 444 556 ₽ с модульным домом)'),
 ]
 errors = [
+    ('Длина кабельных траншей на листе 05 занижена на 5,7 м: не учтена общая ветка от магистрали к беседке и хозблоку', 'объём земляных работ и смета', 'траншеи 60 м вместо 54 (+3 600 ₽)'),
     ('Линия К1 бани (КК-1 → КК-2) шла в 1,6 м от фундамента дома', 'норма 3,0 м, СП 42.13330, табл. 12.6', 'трасса на x = 21,0 — ровно 3,0 м'),
     ('Кабель к ЛОС пересекал выпуск К1 дома у фасада с зазором ≈ 0,07 м', 'ПУЭ 2.3: ≥ 0,5 м, в трубе ≥ 0,25 м', 'кабель ЛОС выходит из подполья с левой стороны дома и К1 не пересекает'),
     ('Кабель бани пересекал К1 бани у КК-Б с зазором ≈ 0,05 м (труба на −0,65, кабель на −0,70)', 'ПУЭ 2.3: в трубе ≥ 0,25 м', 'кабель на пересечении заглублён до −0,95 в гофре на 4 м — 0,30 м'),
@@ -34,7 +35,7 @@ todo = [
 body = header('Проверка сетей под новый дом', 'Дом 9,0×11,5 развёрнут: терраса в сад, вход со стороны калитки. Что изменилось в сетях, какие ошибки найдены и исправлены, что остаётся решить.', '11') + f'''
 <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
 <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: #1E2528; color: #F3EFE6"><div class="mono" style="font-size: 26px; font-weight: 500">{fmt(T["site"])} ₽</div><div style="font-size: 12px">смета участка (было 12 444 556 ₽)</div></div>
-<div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: #FBF9F4; border: 1px solid #D6CEBF"><div class="mono" style="font-size: 26px; font-weight: 500">7</div><div style="font-size: 12px; color: #565C61">ошибок прежних вариантов исправлено</div></div>
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: #FBF9F4; border: 1px solid #D6CEBF"><div class="mono" style="font-size: 26px; font-weight: 500">8</div><div style="font-size: 12px; color: #565C61">ошибок прежних вариантов исправлено</div></div>
 <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: #FBF9F4; border: 1px solid #D6CEBF"><div class="mono" style="font-size: 26px; font-weight: 500">3</div><div style="font-size: 12px; color: #565C61">доработки эскиза по котельной: окно, дверь, потолок</div></div>
 <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: #FBF9F4; border: 1px solid #D6CEBF"><div class="mono" style="font-size: 26px; font-weight: 500">46 / 5,8 / 12,5 м</div><div style="font-size: 12px; color: #565C61">К1 / Г1 под землёй / траншея В1</div></div>
 </div>
