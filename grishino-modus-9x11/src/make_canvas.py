@@ -8,10 +8,12 @@ for f in os.listdir(PRJ):
         m = re.search(r'"\$preview": \{"width": (\d+), "height": (\d+)', open(os.path.join(PRJ, f)).read())
         if m: H[f] = (int(m.group(1)), int(m.group(2)))
 rows = [(['Main.dc.html', 'Visual.dc.html', 'Fence.dc.html'], [-400, 1520, 3040]),
+        (['FencePlan.dc.html', 'FenceElev.dc.html', 'FenceNodes.dc.html'], [0, 1520, 3040]),
         (['Sewer.dc.html', 'Water.dc.html', 'Power.dc.html'], [0, 1520, 3040]),
         (['Budget.dc.html', 'Gazebo.dc.html', 'House.dc.html'], [0, 1520, 3040]),
         (['Bath.dc.html', 'Gas.dc.html', 'Check.dc.html'], [0, 1520, 3040])]
 titles = {k: v.get('title') for k, v in c['boards'].items()}
+titles.update({'Fence.dc.html': 'Забор на винтовых сваях', 'FencePlan.dc.html': 'Забор: план опор', 'FenceElev.dc.html': 'Забор: развёртки', 'FenceNodes.dc.html': 'Забор: узлы'})
 titles['House.dc.html'] = 'Дом каркасный 9,0×11,5'; titles['Check.dc.html'] = 'Проверка сетей'
 boards = {}; y = 0
 for names, xs in rows:
@@ -22,6 +24,8 @@ cur = os.path.join(PRJ, 'canvas.json')
 if os.path.exists(cur):   # холст уже есть: сохраняем его ключи и чужие рамки, меняем только раскладку листов
     new = json.load(open(cur))
     for n, e in boards.items(): new['boards'].setdefault(n, {}).update(e)
+    for k, n in enumerate(['FencePlan.dc.html', 'FenceElev.dc.html', 'FenceNodes.dc.html']):
+        if n not in new['order']: new['order'].insert(new['order'].index('Fence.dc.html') + 1 + k, n)
     json.dump(new, open(cur, 'w'), ensure_ascii=False, indent=2); raise SystemExit
 new = {'v': 3, 'createdOnFiles': {'v': 1, 'at': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')},
        'title': 'Гришино-Модус 9х11', 'launch': {'view': 'canvas'}, 'pages': [], 'boards': boards,

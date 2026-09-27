@@ -1,7 +1,9 @@
 from common import *
 from calc import *
+import fence
 
 orig = src('Main.dc.html')
+orig = orig.replace('Металлический забор из профлиста h 2,0 м, столбы в бетоне, шаг 2,5 м', 'Металлический забор из профлиста h 2,0 м, 53 опоры на винтовых сваях, шаг до 2,5 м (листы 02–02.3)')
 css_main = orig[orig.find('svg .b{font-weight:600}')+len('svg .b{font-weight:600}'):orig.find('</style>')]
 css_main += '\n.bldh{fill:#E2D6BE;stroke:#1E2528;stroke-width:.12} .ter{fill:#ECE4D2;stroke:#1E2528;stroke-width:.08} .boil{fill:#F6E3A6} .wet{fill:#D9E6EF} .ent{fill:#E3EDD6}\n.g1f{fill:none;stroke:#C28E00;stroke-width:.12;stroke-dasharray:.3 .12} .tpost{fill:#1E2528}\n' + BAD_CSS
 s = Svg()
@@ -71,11 +73,7 @@ s.pl([(26.5, 32), (30.5, 32)], 'gate'); s.pl([(24.9, 31.65), (26.5, 31.65)], 'ga
 s.add('<path class="arc" d="M 18 32 L 18 31 A 1 1 0 0 1 19 32"></path>')
 s.text(28.5, 32.55, '10 · ворота 4,0 м', 'ts mid'); s.text(19.3, 33.3, '11 · калитка', 'ts')
 s.pl([(26.2, 31.1), (19.4, 31.1)], 'arrow'); s.pg([(19.1, 31.1), (19.6, 30.88), (19.6, 31.32)], 'arrowh'); s.text(22.8, 30.75, 'откат ворот', 'ts mid mu')
-posts = [0, 2.25, 4.5, 6.75, 9, 11.25, 13.5, 15.75, 18, 19, 21.5, 24, 26.5, 30.5, 32]
-for px in posts: s.rect(px-0.13, 31.87, 0.26, 0.26, 'post')
-for i in range(14):
-    t = 32*i/13
-    s.rect(31.87, t-0.13, 0.26, 0.26, 'post'); s.rect(-0.13, t-0.13, 0.26, 0.26, 'post'); s.rect(t-0.13, -0.13, 0.26, 0.26, 'post')
+for p in fence.SUP: s.rect(p['x']-0.13, p['y']-0.13, 0.26, 0.26, 'post')   # 53 опоры на винтовых сваях — по ведомости листа 02.1
 s.pg([(0, 32), (32, 32), (32, 0), (0, 0)], 'bnd')
 for (px, py, t, c, tx, ty) in [(0, 32, 'н1', 'end', -0.5, 33), (0, 0, 'н2', 'end', -0.5, -0.5), (32, 0, 'н3', '', 32.5, -0.5), (32, 32, 'н4', '', 32.5, 33)]:
     s.circ(px, py, 0.28, 'vtx'); s.text(tx, ty, t, f'ts {c} bndc')

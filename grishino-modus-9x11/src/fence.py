@@ -1,113 +1,943 @@
-"""Лист 02 «Забор из профлиста»: расчёт из скрипта исходного листа перенесён сюда, чтобы на листе
-(и в PNG/PDF) стояли готовые числа, а не шаблоны {{…}}. Параметры — те же, что были по умолчанию в «Tweaks»."""
-import math, re
+"""Забор из профлиста на винтовых сваях: разбивка опор, расчёт и листы 02, 02.1, 02.2, 02.3.
 
-W, D = 32.0, 32.0            # участок, м
-H, S = 2.0, 2.5              # высота забора, шаг столбов, м
-SHEET_PRICE, WORK_PRICE = 690, 1250
-PLANK = True
-COLOR = '#3E5B3A'            # RAL 6005, зелёный мох
+Координаты участка — как в calc.py: x от левой границы, y от тыльной границы (н2); улица — y = 32.
+Отметки z — от уровня земли у опоры (±0,000), вверх плюс."""
+from common import *
+from calc import *
+import math
+
+# ---------------- исходные данные ----------------
+AX = 0.10                                   # ось опор — на 0,1 м внутрь участка от границы
+FS, FR, FB, FL = 32 - AX, 32 - AX, AX, AX   # линии осей: улица (y), правая (x), тыльная (y), левая (x)
+WICKET = (18.0, 19.0)                       # оси столбов калитки
+GATE = (26.5, 30.5)                         # оси столбов ворот: В1 (с верхними роликами) и В2 (улавливатель)
+ROLL = (19.0, 26.5)                         # зона отката — вдоль уличного забора до калитки
+LEAF_BODY, CWT = 4.1, 1.6                   # полотно ворот (проём + 0,1 в улавливатель) и противовес
+LEAF_Y = FS - 0.15                          # плоскость полотна — 150 мм внутрь от оси забора
+LEAF_CLOSED = (GATE[1] - LEAF_BODY - CWT, GATE[1])
+LEAF_OPEN = (LEAF_CLOSED[0] - LEAF_BODY, LEAF_CLOSED[1] - LEAF_BODY)
+EMB = (24.4, 26.4)                          # закладная — швеллер 16П 2,0 м полками вниз
+EMB_PILES = (24.7, 25.9)                    # сваи под закладной
+CARR = (24.95, 26.2)                        # роликовые опоры (тележки) на закладной
+VRU_BOX = (VRU[0] - 0.40, VRU[0] + 0.40, 0.90, 1.55, 0.25)    # x0, x1, низ, верх, глубина — шкаф учёта в нише
+SHG_BOX = (SHG[0] - 0.30, SHG[0] + 0.30, 0.60, 1.40, 0.30)    # газовый шкаф в нише
+Z_HEAD, Z_EMB = 0.10, -0.16                 # верх оголовков свай столбов; оголовки свай закладной
+Z_S0, Z_S1 = 0.15, 2.15                     # низ и верх профлиста (лист 2,0 м, зазор до земли 150 мм)
+Z_LAG = (0.45, 1.85)                        # оси лаг 40×20 — по 300 мм от краёв листа
+Z_TOP = 2.20                                # верх столбов (заглушка)
+Z_TOPV = 2.35                               # верх столбов ворот (кронштейн верхних роликов)
+Z_FRZ = -1.40                               # нормативная глубина промерзания суглинков
+SHEET_W, SHEET_USE = 1.15, 1.10             # профлист С20: ширина и полезная ширина
+
+PILES = {   # свая: диаметр ствола, лопасть, длина, оголовок, толщина оголовка, цена
+    '76':  dict(name='СВС-76×2000', d=0.076, wall='3,5', blade=0.20, L=2.0, plate=0.15, pt=0.006, price=2100),
+    '89':  dict(name='СВС-89×2500', d=0.089, wall='3,5', blade=0.25, L=2.5, plate=0.15, pt=0.008, price=3100),
+    '108': dict(name='СВС-108×2500', d=0.108, wall='4,0', blade=0.30, L=2.5, plate=0.20, pt=0.008, price=4200),
+}
+TYPES = {   # тип: назначение, сечение столба, размер, верх столба, свая, цвет на планах
+    'А':  ('промежуточная', '60×60×2', 0.06, Z_TOP, '76', '#3A4045'),
+    'У':  ('угловая', '60×60×2', 0.06, Z_TOP, '76', '#3A4045'),
+    'К':  ('калитки', '80×80×3', 0.08, Z_TOP, '89', '#1D5FA0'),
+    'В1': ('ворот, верхние ролики', '80×80×3', 0.08, Z_TOPV, '108', '#9A5B00'),
+    'В2': ('ворот, улавливатели', '80×80×3', 0.08, Z_TOPV, '108', '#9A5B00'),
+}
+STREET_X = [FL, 2.0, 4.3, 6.6, 8.9, 11.2, 13.5, 15.75, WICKET[0], WICKET[1], 21.5, 24.0, GATE[0], GATE[1], FR]
+N_SIDE = 13                                 # пролётов на боковых и тыльной сторонах
 
 
-def rnd(v, d=0):             # округление «от нуля», как Math.round в исходном листе
+def rnd(v, d=0):
     k = 10 ** d
     return math.floor(v * k + 0.5) / k
 
 
 def nf(v, d):
-    s = f'{v:,.{d}f}'.replace(',', ' ').replace('.', ',')
-    return s
+    return f'{v:,.{d}f}'.replace(',', ' ').replace('.', ',')
 
 
-def rub(v):
-    return nf(rnd(v), 0)
+def mm(v):
+    return nf(rnd(v * 1000), 0)
 
 
-def qf(v):                   # количество: целое — без дробной части, иначе столько знаков, сколько вошло в сумму
-    if float(v).is_integer(): return str(int(v))
-    return nf(v, 1) if rnd(v, 1) == v else nf(v, 2)
+def zf(z):
+    """Отметка в метрах со знаком: +2,200 / ±0,000 / −1,400."""
+    if abs(z) < 5e-4: return '±0,000'
+    return ('+' if z > 0 else '−') + nf(abs(z), 3)
 
 
+def post_len(t):
+    p = PILES[TYPES[t][4]]
+    return TYPES[t][3] - Z_HEAD - p['pt']
+
+
+# ---------------- разбивка опор ----------------
+def supports():
+    """Все опоры по кругу от угла н1 против часовой стрелки на плане: улица → правая → тыльная → левая."""
+    P = []
+    for x in STREET_X: P.append(dict(x=x, y=FS, side='street', s=x))
+    st = (FS - FB) / N_SIDE
+    for k in range(1, N_SIDE + 1): P.append(dict(x=FR, y=FS - k * st, side='right', s=FS - k * st))
+    for k in range(1, N_SIDE + 1): P.append(dict(x=FR - k * st, y=FB, side='back', s=FR - k * st))
+    for k in range(1, N_SIDE): P.append(dict(x=FL, y=FB + k * st, side='left', s=FB + k * st))
+    corners = {1: 'угол н1', 15: 'угол н4', 28: 'угол н3', 41: 'угол н2'}
+    for i, p in enumerate(P, 1):
+        p['n'] = i
+        p['t'] = 'У' if i in corners else 'К' if p['side'] == 'street' and p['x'] in WICKET else \
+                 'В1' if p['side'] == 'street' and p['x'] == GATE[0] else 'В2' if p['side'] == 'street' and p['x'] == GATE[1] else 'А'
+        p['note'] = [corners[i]] if i in corners else []
+    assert len(P) == 53 and P[-1]['y'] < FS
+    return P
+
+
+SUP = supports()
+BYN = {p['n']: p for p in SUP}
+
+
+def seg_dist(p, a, b):
+    ax, ay = a; bx, by = b; px, py = p
+    dx, dy = bx - ax, by - ay
+    t = 0 if dx == dy == 0 else max(0, min(1, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy)))
+    return math.hypot(px - (ax + t * dx), py - (ay + t * dy))
+
+
+def poly_d(p, pts):
+    return min(seg_dist(p, a, b) for a, b in zip(pts, pts[1:]))
+
+
+def rect_pts(r):
+    x, y, w, h = r[:4]
+    return [(x, y), (x + w, y), (x + w, y + h), (x, y + h), (x, y)]
+
+
+# подземные сети и сооружения рядом с забором: название, трасса, глубина, норма в свету от лопасти, основание
+K1N = {'bath': 'линия бани', 'house': 'выпуск дома', 'main': 'магистраль'}
+UTIL = [   # название, коротко, трасса, глубина, норма в свету от лопасти, основание
+    ('Напорный выпуск ЛОС в кювет, ПНД Ø32', 'выпуск ЛОС', [(2.6, 30.5), (2.6, 32.6)], -0.8, 0.5, 'принято: труба вне зоны закручивания'),
+    ('Кабель ВРУ → ЩР-Д и ввод от сети в шкаф ВРУ', 'кабель ВРУ', [(VRU[0], 32.6)] + EL['ВРУ→ЩР-Д'][:2], -0.7, 0.6, 'ПУЭ, п. 2.3.86 · до фундаментов'),
+    ('Газопровод: ввод в ШГ и Г1', 'газ', [(SHG[0], 32.6)] + G1, G1_DEPTH, 1.0, 'СП 62.13330, прил. В · до фундаментов опор'),
+    ('Отвод В1 к соседу, ПНД Ø32 в гильзе', 'В1 к соседу', V1_NEIGH, -1.8, 0.5, 'принято: гильза вне зоны закручивания'),
+    ('В1 в баню вдоль правой границы', 'В1 в баню', V1_BATH, -0.6, 0.5, 'принято'),
+    ('Кессон скважины', 'кессон', rect_pts((30.45, 20.45, 1.1, 1.1)), -2.0, 0.5, 'принято'),
+    ('ЛОС', 'ЛОС', rect_pts(LOS), -2.0, 0.5, 'принято'),
+] + [(f'Кабель 0,4 кВ: {k}', f'кабель {k}', EL[k], -0.7, 0.6, 'ПУЭ, п. 2.3.86') for k in ('ЛОС', 'хозблок', 'баня')] \
+  + [(f'Канализация К1: {K1N.get(k, k)}', f'К1 {K1N.get(k, k)}', k1[k], -1.0, 0.5, 'принято') for k in k1]
+
+
+def blade(p):
+    return PILES[TYPES[p['t']][4]]['blade']
+
+
+def util_checks():
+    """Для каждой сети — ближайшая опора и расстояние в свету от края лопасти."""
+    rows = []
+    for name, short, pts, z, need, why in UTIL:
+        best = min(((poly_d((p['x'], p['y']), pts) - blade(p) / 2, p) for p in SUP), key=lambda a: a[0])
+        emb = min(poly_d((x, LEAF_Y), pts) - PILES['108']['blade'] / 2 for x in EMB_PILES)
+        d, p = best
+        who = f"опора {p['n']}"
+        if emb < d: d, who = emb, 'свая закладной'
+        rows.append((name, who, d, need, why))
+    return rows
+
+
+for p in SUP:   # примечания о сетях рядом с опорой (в свету от лопасти менее 1,5 м)
+    for name, short, pts, z, need, why in UTIL:
+        d = poly_d((p['x'], p['y']), pts) - blade(p) / 2
+        if d < 1.5:
+            p['note'].append(f'{short} — {nf(d, 2)} м')
+for n, t in [(7, 'ниша ВРУ в пролёте 7–8'), (8, 'ниши ВРУ и ШГ по сторонам'), (9, 'калитка: петли, ограничитель 90°'),
+             (10, 'калитка: замок, упор'), (11, 'зона отката: полотно проходит с внутренней стороны'),
+             (12, 'зона отката: полотно проходит с внутренней стороны'), (13, 'верхние направляющие ролики'),
+             (14, 'нижний и верхний улавливатели')]:
+    BYN[n]['note'].insert(0, t)
+
+
+# ---------------- участки забора ----------------
+def runs():
+    """Участки между столбами калитки, ворот и углами: лаги непрерывны внутри участка, профлист — по участку."""
+    st = SUP
+    def seg(a, b, name):
+        pa, pb = BYN[a], BYN[b]
+        ln = math.hypot(pa['x'] - pb['x'], pa['y'] - pb['y'])
+        corner_ext = 0.07 * sum(1 for q in (pa, pb) if q['t'] == 'У')   # лист заходит на угол до внешней плоскости
+        sheets = math.ceil((ln + corner_ext) / SHEET_USE - 1e-9)
+        spans = (b - a) if b > a else (b + 53 - a)
+        return dict(name=name, a=a, b=b, len=ln, spans=spans, sheets=sheets)
+    return [seg(1, 9, 'Улица: угол н1 — калитка (ниши ВРУ и ШГ)'), seg(10, 13, 'Улица: зона отката ворот'),
+            seg(14, 15, 'Улица: за воротами — угол н4'), seg(15, 28, 'Правая граница'), seg(28, 41, 'Тыльная граница'),
+            seg(41, 1, 'Левая граница')]
+
+
+RUNS = runs()
+
+
+def spans(side):
+    ps = [p for p in SUP if p['side'] == side]
+    if side == 'right': ps = [BYN[15]] + ps
+    if side == 'back': ps = [BYN[28]] + ps
+    if side == 'left': ps = [BYN[41]] + ps + [BYN[1]]
+    return ps
+
+
+# ---------------- расчёт ----------------
 def calc():
-    gx1 = W - 1.5; gx0 = gx1 - 4; wx1 = gx0 - 7.5; wx0 = max(wx1 - 1, 0)
-    runs_in = [('Улица: до калитки', wx0), ('Улица: зона отката ворот', 7.5), ('Улица: за воротами', W - gx1),
-               ('Тыльная граница', W), ('Левая граница', D), ('Правая граница', D)]
-    inner = sheets = 0; L = 0.0; runs = []
-    for name, ln in runs_in:
-        sp = math.ceil(ln / S - 1e-9); sh = math.ceil(ln / 1.1 - 1e-9); ip = max(sp - 1, 0)
-        inner += ip; sheets += sh; L += ln
-        runs.append((name, nf(ln, 2), str(ip), str(sh)))
-    posts = inner + 4; allp = posts + 4
-    post_len = math.ceil((H + 1.15) * 10 - 1e-9) / 10
-    rows = 3 if H > 2.05 else 2
-    area = rnd(sheets * 1.15 * H, 1)
+    L = sum(r['len'] for r in RUNS)
+    sheets = sum(r['sheets'] for r in RUNS)
+    area = rnd(sheets * SHEET_W * (Z_S1 - Z_S0), 1)
+    cnt = {t: sum(1 for p in SUP if p['t'] == t) for t in TYPES}
+    n60 = cnt['А'] + cnt['У']; n80 = cnt['К'] + cnt['В1'] + cnt['В2']
+    len60 = n60 * rnd(post_len('А'), 2); len80 = 2 * rnd(post_len('К'), 2) + 2 * rnd(post_len('В1'), 2)
+    sticks60 = math.ceil(n60 / math.floor(12 / rnd(post_len('А'), 2)))
+    lag = rnd(2 * L * 1.05, 1); sticks_lag = math.ceil(lag / 6)
+    p76, p89, p108 = n60, cnt['К'], cnt['В1'] + cnt['В2'] + len(EMB_PILES)
     mats = [
-        (f'Профлист С20 0,45 мм, полимер с одной стороны, лист {nf(H, 1)} м', 'м²', area, SHEET_PRICE),
-        (f'Столбы — труба 60×60×2, L = {nf(post_len, 1)} м ({posts} шт)', 'м', rnd(posts * post_len, 1), 330),
-        ('Столбы ворот и калитки — труба 80×80×3, L = 3,5 м (4 шт)', 'м', 14, 720),
-        (f'Лаги — труба 40×20×2, {rows} ряда', 'м', rnd(rows * L * 1.05, 1), 125),
-        ('Саморез 5,5×19 по металлу с EPDM, в цвет', 'шт', sheets * rows * 6, 3.2),
-        ('Заглушка на столб', 'шт', allp, 60),
-    ]
-    if PLANK:
-        mats.append(('Планка П-образная на верх забора, 2 м', 'шт', math.ceil(L / 1.95), 380))
-    mats += [
-        ('Бетон М250 — бетонирование столбов на всю глубину (Ø250 / Ø300 у ворот)', 'м³',
-         rnd((posts * math.pi * 0.125 ** 2 * 1.05 + 4 * math.pi * 0.15 ** 2 * 1.15) * 1.1, 2), 7800),
-        ('Щебень 20–40 — подушка 150 мм на дне скважин', 'м³', rnd(allp * math.pi * 0.125 ** 2 * 0.15 * 1.2, 2), 3200),
-        ('Рубероид РКП-350 — рукав-опалубка скважины (защита от пучения), рулон 10 м²', 'рул', math.ceil(allp * 0.82 / 10), 650),
-        ('Грунт-эмаль по металлу 3 в 1, 2,7 кг', 'банка', math.ceil(allp / 25), 1450),
-        ('Электроды 3 мм, 2,5 кг', 'пачка', math.ceil(allp / 30), 950),
-        (f'Ворота откатные 4,0×{nf(H, 1)} м: рама из профтрубы, обшивка профлистом С20 в цвет забора, фурнитура, закладная 16П', 'компл', 1, 82000),
-        (f'Калитка 1,0×{nf(H, 1)} м: рама из профтрубы, обшивка профлистом С20, петли, замок', 'компл', 1, 13500),
+        (f'Сваи винтовые {PILES["76"]["name"]}, лопасть Ø200, оголовок 150×150×6 — под столбы типов А и У', 'шт', p76, PILES['76']['price']),
+        (f'Сваи винтовые {PILES["89"]["name"]}, лопасть Ø250, оголовок 150×150×8 — под столбы калитки', 'шт', p89, PILES['89']['price']),
+        (f'Сваи винтовые {PILES["108"]["name"]}, лопасть Ø300, оголовок 200×200×8 — под столбы ворот и закладную', 'шт', p108, PILES['108']['price']),
+        (f'Столбы — труба 60×60×2, {sticks60} хлыстов по 12 м, нарезка {n60} × {mm(post_len("А"))} мм', 'м', sticks60 * 12, 330),
+        ('Столбы калитки и ворот — труба 80×80×3, 2 хлыста по 6 м (2 × 2 090 + 2 × 2 240 мм)', 'м', 12, 720),
+        (f'Лаги — труба 40×20×2, 2 ряда, {sticks_lag} хлыстов по 6 м', 'м', sticks_lag * 6, 125),
+        ('Обрамление ниш ВРУ и ШГ — труба 40×40×2', 'м', 8, 190),
+        (f'Профлист С20 0,45 мм RAL 6005, лист 1 150 × 2 000, {sheets} шт', 'м²', area, 690),
+        ('Саморез 5,5×19 по металлу с EPDM, в цвет (6 шт на лист на ряд лаг)', 'шт', sheets * 2 * 6, 3.2),
+        ('Планка П-образная на верх забора, 2 м', 'шт', math.ceil(L / 1.95 - 1e-9), 380),
+        ('Уголок-планка на углы забора и края ниш, 2 м', 'шт', 8, 290),
+        ('Заглушки на столбы 60×60 / 80×80', 'шт', n60 + n80, 60),
+        ('Грунт-эмаль по металлу 3 в 1 RAL 6005, 2,7 кг (столбы, лаги, оголовки, 2 слоя)', 'банка', 6, 1450),
+        ('Электроды 3 мм, 2,5 кг', 'пачка', 3, 950),
+        ('Ворота откатные 4,0 × 2,0 м: полотно 4,1 м + противовес 1,6 м, обшивка С20 в цвет забора, комплект фурнитуры (2 роликовые опоры, концевой ролик, нижний и верхний улавливатели, верхние ролики), швеллер 16П 2,0 м', 'компл', 1, 82000),
+        ('Калитка 0,86 × 2,0 м: рама 40×40, обшивка С20, 2 петли, замок, ограничитель открывания', 'компл', 1, 13500),
     ]
     works = [
-        ('Монтаж забора: бурение Ø250 на 1,2 м, бетонирование столбов, сварка лаг, окраска, профлист', 'м', rnd(L, 1), WORK_PRICE),
-        ('Монтаж откатных ворот с фундаментом под закладную', 'компл', 1, 28000),
+        ('Геодезическая разбивка осей и опор, поиск подземных сетей трассоискателем, вешки', 'компл', 1, 12000),
+        ('Закручивание свай СВС-76: разметка, закручивание, выверка по шнуру и уровню, обрезка по отметке, оголовок', 'шт', p76, 1300),
+        ('Закручивание свай СВС-89 и СВС-108 (калитка, ворота, закладная)', 'шт', p89 + p108, 2000),
+        ('Монтаж столбов на оголовки (сварка, выверка), лаги, окраска, профлист, планка', 'м', rnd(L, 1), 850),
+        ('Ниши ВРУ и ШГ в линии забора: обрамление, вырезка листа, окантовка', 'компл', 1, 7000),
+        ('Монтаж откатных ворот: закладная на сваях, роликовые опоры, улавливатели, регулировка', 'компл', 1, 26000),
         ('Монтаж калитки', 'компл', 1, 6000),
-        ('Доставка материалов', 'рейс', 2, 6000),
+        ('Доставка материалов и свай', 'рейс', 2, 6000),
     ]
-    n = 0
-    def mk(arr):
-        nonlocal n
-        out = []
-        for name, unit, q, price in arr:
-            n += 1; sm = rnd(q * price)
-            out.append((str(n), name, unit, qf(q), rub(price) if float(price).is_integer() else nf(price, 1), rub(sm), sm))
-        return out
-    mat_rows, work_rows = mk(mats), mk(works)
-    m = sum(r[6] for r in mat_rows); w = sum(r[6] for r in work_rows)
-    return dict(runs=runs, mat_rows=mat_rows, work_rows=work_rows, kL=nf(L, 1), kPosts=str(allp), kSheets=str(sheets),
-                kArea=nf(area, 1), mSum=rub(m), wSum=rub(w), total=rub(m + w), total_v=int(m + w), perM=rub((m + w) / L),
-                hLabel=nf(H, 1), sLabel=nf(S, 1), rowsLabel=f'{rows} ряда лаг', plotLabel=f'{nf(W, 2)} × {nf(D, 2)} м',
-                plankOp='1' if PLANK else '0', color=COLOR)
+    return dict(L=L, sheets=sheets, area=area, cnt=cnt, mats=mats, works=works, p76=p76, p89=p89, p108=p108,
+                n60=n60, n80=n80, len60=len60, len80=len80, lag=lag)
 
 
-def static(html):
-    """Подставляет расчёт в исходный лист и убирает скрипт пересчёта."""
-    v = calc()
-    def expand(list_name, var, rows, keys):
-        nonlocal html
-        m = re.search(r'<sc-for list="\{\{' + list_name + r'\}\}" as="' + var + r'"[^>]*>(.*?)</sc-for>', html, flags=re.S)
-        assert m, list_name
-        body = ''
-        for r in rows:
-            t = m.group(1)
-            for k, val in zip(keys, r): t = t.replace('{{' + var + '.' + k + '}}', val)
-            body += t
-        html = html[:m.start()] + body + html[m.end():]
-    expand('runs', 'r', v['runs'], ('name', 'len', 'posts', 'sheets'))
-    expand('matRows', 'i', v['mat_rows'], ('n', 'name', 'unit', 'qty', 'price', 'sum'))
-    expand('workRows', 'i', v['work_rows'], ('n', 'name', 'unit', 'qty', 'price', 'sum'))
-    html = html.replace('{{{{plotLabel}}}}', v['plotLabel'])
-    html = html.replace(' Количество и стоимость пересчитываются от параметров в «Tweaks».',
-                        f' Высота {v["hLabel"]} м, шаг столбов {v["sLabel"]} м, профлист RAL 6005.')
-    for k in ('kL', 'kPosts', 'kSheets', 'kArea', 'mSum', 'wSum', 'total', 'perM', 'hLabel', 'sLabel', 'rowsLabel', 'plankOp', 'color'):
-        html = html.replace('{{' + k + '}}', v[k])
-    h = re.search(r'"\$preview": \{"width": (\d+), "height": (\d+)\}', html)
-    html = re.sub(r'<script type="text/x-dc" data-dc-script.*?</script>',
-                  '<script type="text/x-dc" data-dc-script data-props=\'{"$preview": {"width": %s, "height": %s}}\'>\n'
-                  'class Component extends DCLogic {\nrenderVals() { return {}; }\n}\n</script>' % h.groups(), html, count=1, flags=re.S)
-    html = html.replace('</style>', 'svg .ct{paint-order:stroke;stroke:#FBF9F4;stroke-width:3.5px;stroke-linejoin:round}\n</style>', 1)   # подписи читаются на тёмном профлисте
-    assert '{{' not in html, re.findall(r'.{30}\{\{.{30}', html)
-    return html, v['total_v']
+def cost():
+    c = calc()
+    m = sum(rnd(q * p) for _, _, q, p in c['mats']); w = sum(rnd(q * p) for _, _, q, p in c['works'])
+    return m, w, m + w
+
+
+def total():
+    return int(cost()[2])
+
+
+def wind():
+    """Проверка столба и сваи на ветер: I ветровой район, местность B (СП 20.13330)."""
+    w0, k, cx, gf = 0.23, 0.5, 1.4, 1.4
+    w = w0 * k * cx * gf                                     # кПа
+    step = max(math.hypot(a['x'] - b['x'], a['y'] - b['y']) for a, b in zip(SUP, SUP[1:] + SUP[:1])
+               if {a['t'], b['t']} not in ({'К'}, {'В1', 'В2'}))          # пролёты с обшивкой, без проёмов
+    F = w * step * (Z_S1 - Z_S0)                             # кН на столб
+    arm = (Z_S0 + Z_S1) / 2 - Z_HEAD
+    M = F * arm                                              # кН·м у оголовка
+    I60 = (60 ** 4 - 56 ** 4) / 12; W60 = I60 / 30          # мм³
+    Ip = math.pi * (76 ** 4 - 69 ** 4) / 64; Wp = Ip / 38
+    return dict(w=w, step=step, F=F, arm=arm, M=M, s60=M * 1e6 / W60, spile=M * 1e6 / Wp, W60=W60 / 1000, Wp=Wp / 1000)
+
+
+# ================= рисование =================
+C = dict(ink='#1E2528', mu='#565C61', post='#3A4045', pile='#7C858C', blade='#4E575E', lag='#8C9399', sheet='#3E5B3A',
+         soil='#E7DFCF', frz='#1D5FA0', gas='#C28E00', k1='#7A3E1D', v1='#1D5FA0', el='#C45F08', gate='#9A5B00', wick='#1D5FA0', paper='#FBF9F4')
+
+
+class D(Svg):
+    """SVG в метрах: толщина линий и размер текста — в пикселях при масштабе sc (px на метр)."""
+    def __init__(self, sc): super().__init__(); self.sc = sc
+    def ln(self, x1, y1, x2, y2, w=1.0, c=C['ink'], dash=''):
+        return self.line(x1, y1, x2, y2, '', f'stroke:{c};stroke-width:{w}px;vector-effect:non-scaling-stroke' + (f';stroke-dasharray:{dash}' if dash else ''))
+    def pln(self, pts, w=1.0, c=C['ink'], dash='', fill='none'):
+        return self.pl(pts, '', f'fill:{fill};stroke:{c};stroke-width:{w}px;vector-effect:non-scaling-stroke' + (f';stroke-dasharray:{dash}' if dash else ''))
+    def box(self, x, y, w, h, fill='none', c=None, sw=0.8, dash='', op=None):
+        st = f'fill:{fill}' + (f';stroke:{c};stroke-width:{sw}px;vector-effect:non-scaling-stroke' if c else '') + (f';stroke-dasharray:{dash}' if dash else '') + (f';opacity:{op}' if op is not None else '')
+        return self.rect(x, y, w, h, '', st)
+    def poly(self, pts, fill='none', c=None, sw=0.8, dash='', op=None):
+        st = f'fill:{fill}' + (f';stroke:{c};stroke-width:{sw}px;vector-effect:non-scaling-stroke' if c else '') + (f';stroke-dasharray:{dash}' if dash else '') + (f';opacity:{op}' if op is not None else '')
+        return self.pg(pts, '', st)
+    def dot(self, x, y, r_px, fill=C['ink'], c=None, sw=0.8):
+        st = f'fill:{fill}' + (f';stroke:{c};stroke-width:{sw}px;vector-effect:non-scaling-stroke' if c else '')
+        return self.circ(x, y, r_px / self.sc, '', st)
+    def ring(self, x, y, r, c=C['ink'], sw=0.8, fill='none', dash=''):
+        return self.circ(x, y, r, '', f'fill:{fill};stroke:{c};stroke-width:{sw}px;vector-effect:non-scaling-stroke' + (f';stroke-dasharray:{dash}' if dash else ''))
+    def t(self, x, y, s, px=11, a='', c=C['ink'], b=False, mono=False, rot=None, halo=False):
+        st = f'font-size:{px / self.sc:.5f}px;fill:{c}' + (';font-weight:600' if b else '') + (";font-family:'IBM Plex Mono',monospace" if mono else '')
+        if halo: st += f';paint-order:stroke;stroke:{C["paper"]};stroke-width:{3 / self.sc:.5f}px;stroke-linejoin:round'
+        return self.text(x, y, s, {'m': 'mid', 'e': 'end', '': ''}[a], rot, st)
+    def tag(self, x, y, s, r_px=8, fill=C['ink'], px=9):
+        self.dot(x, y, r_px, fill); return self.t(x, y + px * 0.36 / self.sc, s, px, 'm', '#FFFFFF', True)
+    def dimh(self, x1, x2, y, s=None, px=9.5, tick=4, above=True, c=C['mu']):
+        self.ln(x1, y, x2, y, 0.7, c)
+        for x in (x1, x2): self.ln(x - tick / self.sc, y + tick / self.sc, x + tick / self.sc, y - tick / self.sc, 1.1, C['ink'])
+        if s is None: s = mm(abs(x2 - x1))
+        self.t((x1 + x2) / 2, y - (3 / self.sc if above else -px * 1.05 / self.sc), s, px, 'm', C['ink'], mono=True)
+    def dimv(self, x, y1, y2, s=None, px=9.5, tick=4, left=True, c=C['mu']):
+        self.ln(x, y1, x, y2, 0.7, c)
+        for y in (y1, y2): self.ln(x - tick / self.sc, y + tick / self.sc, x + tick / self.sc, y - tick / self.sc, 1.1, C['ink'])
+        if s is None: s = mm(abs(y2 - y1))
+        xx = x - 3 / self.sc if left else x + px * 1.05 / self.sc
+        self.t(xx, (y1 + y2) / 2, s, px, 'm', C['ink'], mono=True, rot=-90)
+    def chainh(self, xs, y, px=9, min_px=26, above=True):
+        xs = sorted(xs); self.ln(xs[0], y, xs[-1], y, 0.7, C['mu'])
+        for x in xs: self.ln(x - 4 / self.sc, y + 4 / self.sc, x + 4 / self.sc, y - 4 / self.sc, 1.1, C['ink'])
+        for a, b in zip(xs, xs[1:]):
+            if (b - a) * self.sc >= min_px: self.t((a + b) / 2, y - (3 / self.sc if above else -px * 1.05 / self.sc), mm(b - a), px, 'm', C['ink'], mono=True)
+    def chainv(self, ys, x, px=9, min_px=26, left=True):
+        ys = sorted(ys); self.ln(x, ys[0], x, ys[-1], 0.7, C['mu'])
+        for y in ys: self.ln(x - 4 / self.sc, y + 4 / self.sc, x + 4 / self.sc, y - 4 / self.sc, 1.1, C['ink'])
+        for a, b in zip(ys, ys[1:]):
+            if (b - a) * self.sc >= min_px: self.t(x - 3 / self.sc if left else x + px * 1.05 / self.sc, (a + b) / 2, mm(b - a), px, 'm', C['ink'], mono=True, rot=-90)
+    def mark(self, x, z, label, px=9, right=False):
+        """Высотная отметка: треугольник и подпись (z — отметка, по оси Y — минус z)."""
+        y = -z; h = 5 / self.sc
+        self.poly([(x, y), (x - h, y - h), (x + h, y - h)], C['ink'])
+        self.ln(x - 2.2 * h, y, x + 2.2 * h, y, 0.8)
+        self.t(x + (2.6 * h if right else -2.6 * h), y - 1.5 / self.sc, label, px, '' if right else 'e', C['ink'], mono=True)
+    def out(self, x0, y0, w, h, width_px, style='background: #FBF9F4; border: 1px solid #D6CEBF'):
+        return self.svg(width_px, round(width_px * h / w), f'{x0:.3f} {y0:.3f} {w:.3f} {h:.3f}', style)
+
+
+def draw_support(d, X, t, head=Z_HEAD, top=None, pile_only=False, face=None):
+    """Опора в фасаде: свая (ствол, лопасть, наконечник), оголовок, столб, заглушка. Y = −z."""
+    P = PILES[TYPES[t][4]] if t in TYPES else PILES[t]
+    L, pd, bl = P['L'], P['d'], P['blade']
+    tip = head - L
+    d.box(X - pd / 2, -head, pd, L - 0.10, C['pile'], C['ink'], 0.5)                    # ствол
+    d.poly([(X - pd / 2, -(tip + 0.10)), (X + pd / 2, -(tip + 0.10)), (X, -tip)], C['pile'], C['ink'], 0.5)   # наконечник
+    zb = tip + 0.22                                                                     # лопасть (виток)
+    d.poly([(X - bl / 2, -(zb - 0.02)), (X + bl / 2, -(zb + 0.03)), (X + bl / 2, -(zb + 0.045)), (X - bl / 2, -(zb - 0.005))], C['blade'], C['ink'], 0.5)
+    pt = max(P['pt'], 1.6 / d.sc)
+    d.box(X - P['plate'] / 2, -(head + pt), P['plate'], pt, C['ink'])                   # оголовок
+    if pile_only: return
+    w = TYPES[t][2]; top = top or TYPES[t][3]
+    d.box(X - w / 2, -top, w, top - head - pt, C['post'], C['ink'], 0.5)               # столб
+    d.box(X - w / 2 - 0.004, -(top + max(0.006, 1.5 / d.sc)), w + 0.008, max(0.006, 1.5 / d.sc), C['ink'])   # заглушка
+
+
+def draw_ground(d, x0, x1, zmin=-3.05):
+    d.box(x0, 0, x1 - x0, -zmin, C['soil'])
+    d.ln(x0, 0, x1, 0, 1.3, C['ink'])
+    d.ln(x0, -Z_FRZ, x1, -Z_FRZ, 0.9, C['frz'], '6 4')
+
+
+def draw_frame(d, a, b, lag=True, sheet=True, cut=()):
+    """Лаги и профлист между осями a и b (в фасаде). cut — вырезы (x0, x1, z0, z1) под ниши."""
+    if lag:
+        for z in Z_LAG: d.box(a, -(z + 0.02), b - a, 0.04, C['lag'], C['ink'], 0.4)
+    if sheet:
+        d.box(a, -Z_S1, b - a, Z_S1 - Z_S0, C['sheet'], op=0.16)
+        x = a + 0.1375
+        while x < b - 0.02:
+            d.ln(x, -Z_S1, x, -Z_S0, 0.35, C['sheet']); x += 0.275
+        d.ln(a, -Z_S1, b, -Z_S1, 2.2, C['sheet'])                                        # П-планка
+        d.ln(a, -Z_S0, b, -Z_S0, 0.8, C['sheet'])
+        for (x0, x1, z0, z1) in cut:
+            d.box(x0, -z1, x1 - x0, z1 - z0, C['paper'], C['ink'], 0.9)
+
+
+SIDE_POSTS = {'street': list(range(1, 16)), 'right': list(range(15, 29)), 'back': list(range(28, 42)), 'left': list(range(41, 54)) + [1]}
+SIDE_X = {'street': lambda p: p['x'], 'right': lambda p: 32 - p['y'], 'back': lambda p: 32 - p['x'], 'left': lambda p: p['y']}
+SIDE_NAME = {'street': 'Уличный забор — вид с улицы', 'right': 'Правая граница — вид снаружи (от соседа справа)',
+             'back': 'Тыльная граница — вид снаружи', 'left': 'Левая граница — вид снаружи (от соседа слева)'}
+
+
+def elevation(side, xa, xb, sc, zmax=3.25, zmin=-3.35, marks=True, width=None):
+    d = D(sc); X = SIDE_X[side]
+    ps = [BYN[n] for n in SIDE_POSTS[side]]
+    draw_ground(d, xa, xb, zmin)
+    # обшивка и лаги по участкам (без проёмов калитки и ворот)
+    xs = [X(p) for p in ps]
+    groups = []; cur = [xs[0]]
+    for p, q, xp, xq in zip(ps, ps[1:], xs, xs[1:]):
+        if side == 'street' and {p['t'], q['t']} in ({'К'}, {'В1', 'В2'}):
+            groups.append(cur); cur = [xq]
+        else: cur.append(xq)
+    groups.append(cur)
+    cut = [(VRU_BOX[0], VRU_BOX[1], VRU_BOX[2], VRU_BOX[3]), (SHG_BOX[0], SHG_BOX[1], SHG_BOX[2], SHG_BOX[3])] if side == 'street' else []
+    for p, xp in zip(ps, xs): draw_support(d, xp, p['t'])
+    if side == 'street':                                  # закладная ворот на сваях (за линией забора, показана пунктиром)
+        for x in EMB_PILES: draw_support(d, x, '108', head=Z_EMB, pile_only=True)
+        d.box(EMB[0], 0, EMB[1] - EMB[0], -Z_EMB, '#9AA0A4', C['ink'], 0.8)
+    for g in groups: draw_frame(d, min(g), max(g), cut=[c for c in cut if min(g) < c[0] < max(g)])
+    if side == 'street':
+        # шкафы в нишах
+        x0, x1, z0, z1, _ = VRU_BOX
+        d.box(x0 + 0.02, -z1 + 0.02, x1 - x0 - 0.04, z1 - z0 - 0.04, '#E8E3D6', C['ink'], 1)
+        d.box((x0 + x1) / 2 - 0.12, -(z0 + 0.42), 0.24, 0.13, '#FFFFFF', C['ink'], 0.7)
+        d.t((x0 + x1) / 2, -(z0 + 0.16), 'ВРУ', 10, 'm', C['ink'], True)
+        d.ln(VRU[0], -z0, VRU[0], 0.7, 1.6, C['el'], '5 3'); d.dot(VRU[0], 0.7, 3.5, C['el'])
+        x0, x1, z0, z1, _ = SHG_BOX
+        d.box(x0 + 0.02, -z1 + 0.02, x1 - x0 - 0.04, z1 - z0 - 0.04, '#F2C230', C['ink'], 1)
+        for k in range(4): d.ln(x0 + 0.12, -(z1 - 0.12 - k * 0.05), x1 - 0.12, -(z1 - 0.12 - k * 0.05), 0.7)
+        d.t((x0 + x1) / 2, -(z0 + 0.2), 'ШГ', 10, 'm', C['ink'], True)
+        for dx in (-0.09, 0.09): d.ln(SHG[0] + dx, -z0, SHG[0] + dx, -G1_DEPTH, 1.8, C['gas'])
+        d.dot(SHG[0], -G1_DEPTH, 4, C['gas'])
+        # калитка
+        a, b = WICKET[0] + 0.07, WICKET[1] - 0.07
+        d.box(a, -Z_S1, b - a, Z_S1 - Z_S0, C['sheet'], op=0.22); d.box(a, -Z_S1, b - a, Z_S1 - Z_S0, 'none', C['wick'], 1.6)
+        d.ln(a, -(Z_S0 + 1.0), b, -(Z_S0 + 1.0), 1, C['wick'])
+        for z in (0.40, 1.90): d.box(WICKET[0] + 0.04, -(z + 0.06), 0.04, 0.12, C['ink'])
+        d.box(b - 0.07, -1.08, 0.05, 0.16, C['ink'])
+        # ворота (закрыты): полотно в проёме, противовес за забором — пунктир
+        a, b = GATE[0] - 0.1, GATE[1]
+        d.box(a, -Z_S1, b - a, Z_S1 - Z_S0, C['sheet'], op=0.22); d.box(a, -Z_S1, b - a, Z_S1 - Z_S0, 'none', C['gate'], 1.6)
+        d.pln([(LEAF_CLOSED[0], -0.13), (a, -0.13), (a, -Z_S1), (LEAF_CLOSED[0] + 0.3, -(Z_S0 + 0.1)), (LEAF_CLOSED[0], -0.13)], 1.2, C['gate'], '5 3')
+        d.ln(LEAF_CLOSED[0], -0.13, b, -0.13, 2.4, C['gate'])
+        for x in CARR: d.box(x - 0.12, -0.12, 0.24, 0.12, C['gate'])
+        d.box(GATE[0] - 0.16, -(Z_TOPV - 0.02), 0.12, 0.14, C['gate'])                         # верхние ролики
+        d.box(GATE[1] - 0.02, -0.33, 0.1, 0.2, C['gate']); d.box(GATE[1] - 0.02, -(Z_S1 + 0.02), 0.1, 0.16, C['gate'])   # улавливатели
+    # сети на пересечении с линией забора
+    cross = []
+    if side == 'street': cross = [(2.6, -0.8, 'выпуск ЛОС −0,80', C['k1']), (VRU[0], -0.7, 'кабель ВРУ −0,70', C['el']), (SHG[0], G1_DEPTH, 'газ −1,55', C['gas'])]
+    if side == 'right': cross = [(32 - V1_NEIGH[0][1], -1.8, 'В1 к соседу в гильзе −1,80', C['v1'])]
+    for x, z, s, c in cross:
+        d.ring(x, -z, 0.07, c, 1.6, '#FFFFFF'); d.t(x + 0.14, -z + 0.30, s, 9.5, '', c, True, halo=True)
+    # номера опор и цепочка размеров
+    for p, xp in zip(ps, xs):
+        d.tag(xp, -(Z_TOPV + 0.35), str(p['n']), 9 if sc > 50 else 7.5, TYPES[p['t']][5], 9 if sc > 50 else 7.5)
+    ych = -(zmin + 0.35)
+    d.chainh(xs, ych, 9 if sc > 50 else 8, 22, above=True)
+    if side == 'street':
+        d.dimh(ROLL[0], ROLL[1], -(Z_TOPV + 0.78), f'зона отката {mm(ROLL[1] - ROLL[0])}', 9.5)
+        d.dimh(GATE[0], GATE[1], -(Z_TOPV + 0.78), f'проём ворот {mm(GATE[1] - GATE[0])}', 9.5)
+        d.dimh(WICKET[0], WICKET[1], -(Z_TOPV + 0.78), 'калитка 1 000', 9.5)
+    if marks:
+        xm = xa + 60 / sc
+        zs = [Z_TOP, Z_LAG[1], Z_LAG[0], 0, Z_FRZ, Z_HEAD - 2.0] + ([Z_TOPV, Z_S0, Z_HEAD - 2.5, Z_EMB - 2.5] if side == 'street' else [])
+        for z in zs: d.mark(xm, z, zf(z), 8.5 if sc > 50 else 8)
+    return d.out(xa, -zmax, xb - xa, zmax - zmin, width or round((xb - xa) * sc), 'flex-shrink: 0; background: #FBF9F4; border: 1px solid #D6CEBF')
+
+
+def site_plan(sc=22.9, x0=-3.4, y0=-3.3, w=38.8, h=39.4):
+    d = D(sc)
+    d.box(0, 0, 32, 32, '#F4F0E4', '#B3261E', 0.9, '8 4')                              # граница участка
+    for pg in (HEATED, TERRACE): d.poly(pg, '#E2D6BE', C['mu'], 0.6)
+    for r in (BATH, GAZEBO, SHED, PARK): d.box(*r, '#ECE6D8', C['mu'], 0.6)
+    d.box(*LOS, '#FFFFFF', C['k1'], 0.8); d.box(30.45, 20.45, 1.1, 1.1, '#FFFFFF', C['v1'], 0.8); d.ring(*WELL, 0.3, C['v1'], 1.2)
+    for tx, ty, s in [(13.5, 21.5, 'дом'), (27.6, 4.6, 'баня'), (6.5, 9.2, 'беседка'), (4.0, 2.3, 'хозблок'), (28.2, 28.4, 'стоянка'), (2.6, 29.0, 'ЛОС'), (29.9, 20.1, 'скважина')]:
+        d.t(tx, ty, s, 10, 'm', C['mu'])
+    for name, short, pts, z, need, why in UTIL:                                          # сети
+        c = C['gas'] if 'газ' in short else C['v1'] if 'В1' in short else C['el'] if 'кабель' in short else C['k1']
+        if 'кессон' in short or short == 'ЛОС': continue
+        d.pln(pts, 1.4, c, '6 3' if 'К1' in short or 'ЛОС' in short else '')
+    # линия профлиста (с наружной стороны опор) и проёмы
+    o = 0.06
+    segs = [((FL, FS + o), (WICKET[0], FS + o)), ((WICKET[1], FS + o), (GATE[0], FS + o)), ((GATE[1], FS + o), (FR + o, FS + o)),
+            ((FR + o, FS + o), (FR + o, FB - o)), ((FR + o, FB - o), (FL - o, FB - o)), ((FL - o, FB - o), (FL - o, FS + o)), ((FL - o, FS + o), (FL, FS + o))]
+    for a, b in segs: d.ln(*a, *b, 3.2, C['sheet'])
+    # ниши
+    for (bx0, bx1, z0, z1, dep), c, s in [(VRU_BOX, '#E8E3D6', 'ВРУ'), (SHG_BOX, '#F2C230', 'ШГ')]:
+        d.box(bx0, FS + 0.07 - dep, bx1 - bx0, dep, c, C['ink'], 0.9); d.t((bx0 + bx1) / 2, FS - 0.55, s, 9, 'm', C['ink'], True)
+    # калитка
+    r = WICKET[1] - WICKET[0] - 0.14
+    hx = WICKET[0] + 0.07
+    d.ln(hx, FS, hx + r, FS, 2.2, C['wick'])
+    d.add(f'<path d="M {hx + r:.3f} {FS:.3f} A {r:.3f} {r:.3f} 0 0 0 {hx:.3f} {FS - r:.3f}" style="fill:none;stroke:{C["wick"]};stroke-width:1px;vector-effect:non-scaling-stroke;stroke-dasharray:4 3"></path>')
+    d.ln(hx, FS, hx, FS - r, 1.4, C['wick'])
+    # ворота: полотно закрыто, открыто (пунктир), закладная и сваи
+    d.ln(LEAF_CLOSED[0], LEAF_Y, LEAF_CLOSED[1], LEAF_Y, 3.2, C['gate'])
+    d.ln(LEAF_OPEN[0], LEAF_Y - 0.28, LEAF_OPEN[1], LEAF_Y - 0.28, 1.6, C['gate'], '6 3')
+    d.box(EMB[0], LEAF_Y - 0.08, EMB[1] - EMB[0], 0.16, '#9AA0A4', C['ink'], 0.6)
+    for x in EMB_PILES: d.ring(x, LEAF_Y, 0.15, C['ink'], 1, '#FFFFFF')
+    # опоры
+    lab = {'street': (0, 0.95), 'right': (0.95, 0), 'back': (0, -0.95), 'left': (-0.95, 0)}
+    for p in SUP:
+        c = TYPES[p['t']][5]; bl = blade(p)
+        d.ring(p['x'], p['y'], bl / 2, c, 0.7, 'none', '2 1.5')
+        q = 0.30 if p['t'] in ('А', 'У') else 0.38
+        d.box(p['x'] - q / 2, p['y'] - q / 2, q, q, c)
+        side = p['side'] if p['t'] != 'У' else {1: 'street', 15: 'street', 28: 'back', 41: 'back'}[p['n']]
+        dx, dy = lab[side]
+        d.tag(p['x'] + dx, p['y'] + dy, str(p['n']), 7.8, c, 8)
+    # цепочки пролётов по осям опор и общие размеры
+    xs = [p['x'] for p in SUP if p['side'] == 'street']
+    d.chainh(xs, 33.55, 7.8, 21, above=True); d.dimh(FL, FR, 34.55, '31 800 по осям опор', 8.5)
+    ys = [FS] + [p['y'] for p in SUP if p['side'] == 'right']
+    d.chainv(ys, 33.55, 7.8, 21, left=False); d.dimv(34.55, FB, FS, '31 800', 8.5, left=False)
+    xs = [FR] + [p['x'] for p in SUP if p['side'] == 'back']
+    d.chainh(xs, -1.75, 7.8, 21); d.dimh(FL, FR, -2.75, '31 800', 8.5)
+    ys = [FB] + [p['y'] for p in SUP if p['side'] == 'left'] + [FS]
+    d.chainv(ys, -1.75, 7.8, 21); d.dimv(-2.6, FB, FS, '31 800', 8.5)
+    for (px, py, t, a) in [(0, 32, 'н1', 'e'), (0, 0, 'н2', 'e'), (32, 0, 'н3', ''), (32, 32, 'н4', '')]:
+        d.t(px + (-0.35 if a == 'e' else 0.35), py + (0.6 if py else -0.3), t, 10, a, '#B3261E', True)
+    d.t(16, 35.2, 'улица', 11, 'm', C['mu'], True); d.t(-3.05, 22, 'сосед слева', 10, 'm', C['mu'], rot=-90); d.t(35.0, 22, 'сосед справа', 10, 'm', C['mu'], rot=90)
+    return d.out(x0, y0, w, h, round(w * sc), 'flex-shrink: 0; background: #FBF9F4; border: 1px solid #D6CEBF')
+
+
+EMB_N = (54, 55)                            # номера свай закладной в общей ведомости
+
+
+def street_plan(x0, x1, sc=71.1, y0=29.75, y1=34.35):
+    """Уличный забор в плане крупно: опоры с лопастями, ниши, калитка, ворота, закладная, сети."""
+    d = D(sc)
+    d.box(x0, y0, x1 - x0, 32 - y0, '#F4F0E4'); d.box(x0, 32, x1 - x0, y1 - 32, '#E9E4D8')
+    d.ln(x0, 32, x1, 32, 1, '#B3261E', '8 4'); d.t(x1 - 0.2, 32.35, 'граница участка', 9, 'e', '#B3261E')
+    d.ln(FL, FS, FR, FS, 0.6, C['mu'], '10 3 2 3'); d.t(x0 + 0.1, FS - 0.08, 'ось опор', 8.5, '', C['mu'])
+    d.box(WICKET[0] + 0.06, FS - 1.9, WICKET[1] - WICKET[0] - 0.12, 1.9 - 0.1, '#DCD3C1')      # дорожка от калитки
+    d.t(sum(WICKET) / 2, FS - 1.35, 'дорожка', 8.5, 'm', C['mu'])
+    o = 0.06
+    for a, b in [(FL, WICKET[0]), (WICKET[1], GATE[0]), (GATE[1], FR)]: d.ln(a, FS + o, b, FS + o, 3.4, C['sheet'])
+    d.ln(FL - o, FS + o, FL - o, y0, 3.4, C['sheet']); d.ln(FR + o, FS + o, FR + o, y0, 3.4, C['sheet'])
+    for (bx0, bx1, z0, z1, dep), c, s in [(VRU_BOX, '#E8E3D6', 'ВРУ 800×650×250'), (SHG_BOX, '#F2C230', 'ШГ 600×800×300')]:
+        d.box(bx0, FS + 0.07 - dep, bx1 - bx0, dep, c, C['ink'], 1); d.t((bx0 + bx1) / 2, FS - 1.25, s, 9, 'm', C['ink'], True, halo=True)
+        d.ln((bx0 + bx1) / 2, FS - 1.18, (bx0 + bx1) / 2, FS + 0.07 - dep, 0.6, C['ink'])
+    # сети, пересекающие линию забора
+    for x, c, s, z in [(2.6, C['k1'], 'выпуск ЛОС в кювет, −0,80', -0.8), (VRU[0], C['el'], 'кабель ВРУ, −0,70', -0.7), (SHG[0], C['gas'], 'газ: ввод в ШГ и Г1, −1,55', -1.55)]:
+        d.ln(x, y0, x, y1, 1.6, c, '7 3'); d.t(x + 0.08, y0 + 0.25, s, 9, '', c, True, halo=True)
+    # калитка
+    r = WICKET[1] - WICKET[0] - 0.14; hx = WICKET[0] + 0.07
+    d.ln(hx, FS, hx + r, FS, 2.4, C['wick'])
+    d.add(f'<path d="M {hx + r:.3f} {FS:.3f} A {r:.3f} {r:.3f} 0 0 0 {hx:.3f} {FS - r:.3f}" style="fill:none;stroke:{C["wick"]};stroke-width:1px;vector-effect:non-scaling-stroke;stroke-dasharray:4 3"></path>')
+    d.ln(hx, FS, hx, FS - r, 1.4, C['wick']); d.box(hx - 0.05, FS - r - 0.08, 0.1, 0.08, C['wick'])
+    d.t(hx - 0.1, FS - r + 0.05, 'упор 90°', 8.5, 'e', C['wick'], halo=True)
+    # ворота
+    d.ln(LEAF_CLOSED[0], LEAF_Y, LEAF_CLOSED[1], LEAF_Y, 3.4, C['gate'])
+    d.ln(LEAF_OPEN[0], LEAF_Y - 0.35, LEAF_OPEN[1], LEAF_Y - 0.35, 1.8, C['gate'], '7 3')
+    d.t(LEAF_CLOSED[0] + CWT / 2, LEAF_Y - 0.12, 'противовес 1 600', 8.5, 'm', C['gate'], halo=True)
+    d.t(GATE[0] + LEAF_BODY / 2, LEAF_Y - 0.12, 'полотно 4 100 (закрыто)', 8.5, 'm', C['gate'], halo=True)
+    d.t(LEAF_OPEN[0] + 0.1, LEAF_Y - 0.47, 'полотно в открытом положении', 9, '', C['gate'], halo=True)
+    d.box(EMB[0], LEAF_Y - 0.08, EMB[1] - EMB[0], 0.16, '#9AA0A4', C['ink'], 0.7)
+    for x in CARR: d.box(x - 0.14, LEAF_Y - 0.09, 0.28, 0.18, C['gate'])
+    for n, x in zip(EMB_N, EMB_PILES):
+        d.ring(x, LEAF_Y, PILES['108']['blade'] / 2, C['gate'], 0.8, 'none', '2 1.5'); d.dot(x, LEAF_Y, 3, C['ink'])
+        d.tag(x, FS - 1.45, str(n), 8.5, C['gate'], 8.5); d.ln(x, FS - 1.33, x, LEAF_Y - 0.1, 0.6, C['gate'])
+    # опоры: сечение столба, оголовок, лопасть — в масштабе
+    for p in [q for q in SUP if q['side'] == 'street']:
+        tp = TYPES[p['t']]; P = PILES[tp[4]]; c = tp[5]
+        d.ring(p['x'], p['y'], P['blade'] / 2, c, 0.8, 'none', '2 1.5')
+        d.box(p['x'] - P['plate'] / 2, p['y'] - P['plate'] / 2, P['plate'], P['plate'], 'none', C['ink'], 0.6)
+        d.box(p['x'] - tp[2] / 2, p['y'] - tp[2] / 2, tp[2], tp[2], c)
+        d.tag(p['x'], FS - 0.75, str(p['n']), 8.5, c, 8.5)
+    xs = [p['x'] for p in SUP if p['side'] == 'street']
+    d.chainh(xs, 32.95, 9, 20)
+    d.dimh(ROLL[0], ROLL[1], 30.05, f'зона отката {mm(ROLL[1] - ROLL[0])}', 9)
+    d.chainh([EMB[0], EMB_PILES[0], EMB_PILES[1], EMB[1], GATE[0]], 33.55, 9, 18)
+    d.t(EMB[0] - 0.1, 33.5, 'закладная 16П 2 000, сваи 54, 55', 9, 'e', C['ink'])
+    d.chainh([VRU_BOX[0], VRU_BOX[1], SHG_BOX[0], SHG_BOX[1]], 33.55, 9, 18)
+    d.chainh([13.5, VRU[0], 15.75, SHG[0], 18.0], 34.05, 9, 18)
+    return d.out(x0, y0, x1 - x0, y1 - y0, round((x1 - x0) * sc), 'flex-shrink: 0; background: #FBF9F4; border: 1px solid #D6CEBF')
+
+
+def leader(d, x, y, tx, ty, s, px=10, a=''):
+    d.ln(x, y, tx, ty, 0.7); d.dot(x, y, 2.2)
+    d.t(tx + (0.03 if a == '' else -0.03) * 150 / d.sc, ty + 3.5 / d.sc, s, px, a, C['ink'], halo=True)
+
+
+def callout(d, x, y, tx, ty, n, c=C['ink']):
+    d.ln(x, y, tx, ty, 0.7); d.dot(x, y, 2.2); d.tag(tx, ty, str(n), 8.5, c, 9)
+
+
+def node_post(sc=150):
+    """У1: опора типа А — фасад со стороны участка и разрез 1–1 поперёк забора."""
+    d = D(sc); P = PILES['76']
+    X0, X1 = -1.12, 3.95
+    d.box(X0, 0, X1 - X0, 2.12, C['soil']); d.ln(X0, 0, X1, 0, 1.3); d.ln(X0, -Z_FRZ, X1, -Z_FRZ, 0.9, C['frz'], '6 4')
+    # фасад: столб, обрезки лаг, лист за ними
+    d.box(-0.45, -Z_S1, 0.9, Z_S1 - Z_S0, C['sheet'], op=0.14)
+    x = -0.45 + 0.1375
+    while x < 0.45: d.ln(x, -Z_S1, x, -Z_S0, 0.4, C['sheet']); x += 0.275
+    draw_support(d, 0, 'А')
+    for z in Z_LAG: d.box(-0.45, -(z + 0.02), 0.9, 0.04, C['lag'], C['ink'], 0.5)
+    d.ln(-0.45, -Z_S1, 0.45, -Z_S1, 2.6, C['sheet'])
+    d.t(0, -2.52, 'фасад со стороны участка', 10, 'm', C['mu'], True)
+    for z in (Z_TOP, Z_S1, Z_LAG[1], Z_LAG[0], Z_S0, Z_HEAD, 0, Z_FRZ, Z_HEAD - P['L']):
+        d.mark(-0.55, z, zf(z), 9)
+    # разрез 1–1: ось опоры в X = 1.7; улица справа
+    c = 1.7
+    d.ln(c + AX, -2.35, c + AX, 2.1, 1, '#B3261E', '8 4'); d.t(c + AX + 0.03, -2.25, 'граница участка', 9, '', '#B3261E')
+    d.ln(c, -2.45, c, 2.1, 0.6, C['mu'], '10 3 2 3'); d.t(c - 0.03, -2.38, 'ось опор', 9, 'e', C['mu'])
+    tip = Z_HEAD - P['L']
+    d.box(c - P['d'] / 2, -Z_HEAD, P['d'], P['L'] - 0.1, C['pile'], C['ink'], 0.6)
+    d.poly([(c - P['d'] / 2, -(tip + 0.1)), (c + P['d'] / 2, -(tip + 0.1)), (c, -tip)], C['pile'], C['ink'], 0.6)
+    d.poly([(c - P['blade'] / 2, -(tip + 0.2)), (c + P['blade'] / 2, -(tip + 0.25)), (c + P['blade'] / 2, -(tip + 0.265)), (c - P['blade'] / 2, -(tip + 0.215))], C['blade'], C['ink'], 0.6)
+    d.box(c - 0.075, -(Z_HEAD + 0.006), 0.15, 0.006, C['ink'])
+    d.box(c - 0.03, -Z_TOP, 0.06, Z_TOP - Z_HEAD - 0.006, C['post'], C['ink'], 0.6)
+    d.box(c - 0.034, -(Z_TOP + 0.006), 0.068, 0.006, C['ink'])
+    for z in Z_LAG: d.box(c + 0.03, -(z + 0.02), 0.02, 0.04, C['lag'], C['ink'], 0.6)
+    zz = [Z_S0 + i * 0.0 for i in range(1)]
+    d.pln([(c + 0.05, -Z_S0), (c + 0.05, -Z_S1)], 1.4, C['sheet']); d.pln([(c + 0.07, -Z_S0), (c + 0.07, -Z_S1)], 1.4, C['sheet'])
+    for z in (Z_S0 + 0.05, Z_S1 - 0.05): d.ln(c + 0.05, -z, c + 0.07, -z, 0.8, C['sheet'])
+    d.pln([(c + 0.035, -(Z_S1 - 0.03)), (c + 0.035, -(Z_S1 + 0.02)), (c + 0.085, -(Z_S1 + 0.02)), (c + 0.085, -(Z_S1 - 0.05))], 1.6, C['sheet'])   # П-планка
+    for z in Z_LAG: d.ln(c + 0.03, -z, c + 0.09, -z, 1.2, C['ink'])                                                      # саморез
+    d.t(c, -2.52, 'разрез 1–1 поперёк забора', 10, 'm', C['mu'], True)
+    L = [(c + 0.06, -(Z_S1 + 0.02), 'П-планка на верх листа', -2.2), (c, -(Z_TOP + 0.003), 'заглушка 60×60', -2.33),
+         (c + 0.07, -1.5, 'профлист С20 0,45 RAL 6005, лист 2 000', -1.6), (c + 0.04, -Z_LAG[1], 'лага 40×20×2 (2 ряда), к столбу — сварка', -1.3),
+         (c + 0.09, -Z_LAG[0], 'саморез 5,5×19 с EPDM, 6 шт на лист на лагу', -0.72), (c, -1.0, 'столб 60×60×2, L = 2 094', -1.0),
+         (c + 0.075, -Z_HEAD, 'оголовок 150×150×6, сварка по контуру', -0.3), (c + 0.038, 0.5, 'свая СВС-76×2000, ствол Ø76×3,5', 0.35),
+         (c + 0.1, -(tip + 0.23), 'лопасть Ø200, t = 5 мм — ниже промерзания', 1.5), (c, -tip, 'наконечник литой', 2.0)]
+    for x, y, s, ty in L: leader(d, x, y, c + 0.42, ty, s, 10)
+    d.dimh(c, c + AX, -2.1, '100', 9); d.dimh(c + 0.03, c + 0.07, -1.93, '', 9)
+    d.t(c + 0.05, -1.97, '30 + 20 + 20', 9, 'e', C['ink'], mono=True, halo=True)
+    d.dimv(c - 0.18, -Z_HEAD, -tip, f'{mm(P["L"])} — свая', 9); d.dimv(c - 0.3, 0, -tip, f'{mm(-tip)} в грунте', 9)
+    d.dimv(c - 0.18, -Z_TOP, -Z_HEAD, '2 100', 9)
+    return d.out(X0, -2.72, X1 - X0, 4.9, round((X1 - X0) * sc), 'flex-shrink: 0; background: #FBF9F4; border: 1px solid #D6CEBF')
+
+
+def node_corner(sc=820):
+    """У2: угловая опора н1 в плане."""
+    d = D(sc); cx, cy = FL, FS
+    x0, y0, w, h = -0.14, 31.52, 0.62, 0.64
+    d.box(x0, y0, w, h, '#F4F0E4'); d.box(x0, 32, w, y0 + h - 32, '#E9E4D8'); d.box(x0, y0, 0 - x0, 32 - y0, '#E9E4D8')
+    d.ln(0, y0, 0, y0 + h, 1, '#B3261E', '8 4'); d.ln(x0, 32, x0 + w, 32, 1, '#B3261E', '8 4')
+    d.ring(cx, cy, 0.1, C['ink'], 0.8, 'none', '4 3'); d.ring(cx, cy, 0.038, C['ink'], 0.8, 'none', '4 3')
+    d.box(cx - 0.075, cy - 0.075, 0.15, 0.15, 'none', C['ink'], 0.8, '6 3')
+    d.box(cx - 0.03, cy - 0.03, 0.06, 0.06, C['post'], C['ink'], 0.8); d.box(cx - 0.028, cy - 0.028, 0.056, 0.056, '#FBF9F4')
+    d.box(cx - 0.03, cy + 0.03, x0 + w - cx + 0.03, 0.02, C['lag'], C['ink'], 0.7)         # лага уличного забора
+    d.box(cx - 0.05, y0, 0.02, cy - 0.03 - y0 + 0.05, C['lag'], C['ink'], 0.7)             # лага левого забора
+    zig = [(cx - 0.07 + (0 if i % 2 == 0 else 0), 0) for i in range(1)]
+    d.pln([(cx - 0.07, cy + 0.07), (x0 + w, cy + 0.07)], 2, C['sheet']); d.pln([(cx - 0.07, cy + 0.05), (x0 + w, cy + 0.05)], 1, C['sheet'], '3 3')
+    d.pln([(cx - 0.07, y0), (cx - 0.07, cy + 0.07)], 2, C['sheet']); d.pln([(cx - 0.05, y0), (cx - 0.05, cy + 0.05)], 1, C['sheet'], '3 3')
+    d.pln([(cx - 0.07 + 0.10, cy + 0.08), (cx - 0.08, cy + 0.08), (cx - 0.08, cy + 0.07 - 0.10)], 2.6, C['ink'])     # уголок
+    d.dimh(0, cx, 32.1, '100', 9); d.dimv(0.4, cy, 32, '100', 9, left=False)
+    for x, y, s, tx, ty in [(cx, cy, 'столб 60×60×2 (тип У)', 0.12, 31.62), (cx + 0.075, cy - 0.075, 'оголовок 150×150', 0.2, 31.7),
+                            (cx + 0.1, cy - 0.02, 'лопасть Ø200', 0.25, 31.78), (cx + 0.2, cy + 0.04, 'лага улицы', 0.3, 31.86),
+                            (cx - 0.04, 31.6, 'лага левой границы', 0.08, 31.555), (cx - 0.08, cy + 0.02, 'уголок 100×100 на угол', -0.1, 32.12),
+                            (0.3, cy + 0.07, 'профлист', 0.3, 32.08)]:
+        d.ln(x, y, tx, ty, 0.6); d.dot(x, y, 2); d.t(tx + 0.005, ty - 0.005, s, 9.5, '', C['ink'], halo=True)
+    d.t(x0 + 0.01, y0 + h - 0.015, 'улица', 9, '', C['mu']); d.t(x0 + 0.01, y0 + 0.03, 'сосед', 9, '', C['mu'])
+    return d.out(x0, y0, w, h, round(w * sc), 'flex-shrink: 0; background: #FBF9F4; border: 1px solid #D6CEBF')
+
+
+def node_wicket(sc=150):
+    """У3: калитка — фасад со стороны участка (x зеркально) и план открывания."""
+    d = D(sc)
+    X = lambda x: 36.0 - x                                   # вид со стороны участка: x растёт влево
+    xa, xb = X(19.95), X(15.35)
+    d.box(xa, 0, xb - xa, 2.62, C['soil']); d.ln(xa, 0, xb, 0, 1.3); d.ln(xa, -Z_FRZ, xb, -Z_FRZ, 0.9, C['frz'], '6 4')
+    for n in (9, 10): draw_support(d, X(BYN[n]['x']), 'К')
+    draw_support(d, X(15.75), 'А')
+    for a, b in [(15.4, WICKET[0]), (WICKET[1], 19.95)]:
+        for z in Z_LAG: d.box(X(b), -(z + 0.02), X(a) - X(b), 0.04, C['lag'], C['ink'], 0.5)
+        d.box(X(b), -Z_S1, X(a) - X(b), Z_S1 - Z_S0, C['sheet'], op=0.12)
+    x0, x1, z0, z1, _ = SHG_BOX
+    d.box(X(x1), -z1, x1 - x0, z1 - z0, '#F2C230', C['ink'], 0.8); d.t(X(SHG[0]), -(z0 + 0.35), 'ШГ', 10, 'm', C['ink'], True)
+    a, b = WICKET[0] + 0.07, WICKET[1] - 0.07                   # полотно 860 × 2 000, рама 40×40
+    d.box(X(b), -Z_S1, b - a, Z_S1 - Z_S0, C['sheet'], op=0.2)
+    d.box(X(b), -Z_S1, b - a, Z_S1 - Z_S0, 'none', C['wick'], 2.4)
+    d.ln(X(b), -(Z_S0 + 1.0), X(a), -(Z_S0 + 1.0), 1.6, C['wick']); d.ln(X(b), -Z_S0, X(a), -(Z_S0 + 1.0), 1.2, C['wick'])
+    for z in (0.40, 1.90):                                      # петли на столбе 9
+        d.box(X(WICKET[0]) - 0.07, -(z + 0.08), 0.05, 0.16, C['ink'])
+    d.box(X(b) + 0.02, -1.25, 0.08, 0.22, C['ink'])             # замок
+    d.box(X(WICKET[1]) - 0.045, -1.21, 0.03, 0.14, '#9AA0A4', C['ink'], 0.6)   # ответная планка
+    d.box(X(WICKET[1]) + 0.04, -(Z_S0 + 0.3), 0.05, 0.3, C['ink'])             # упор-притвор
+    for n, (x, y, tx, ty) in enumerate([(X(WICKET[0]) - 0.045, -1.9, X(WICKET[0]) + 0.3, -2.02), (X(b) + 0.06, -1.14, X(b) + 0.33, -1.3),
+                                         (X(WICKET[1]) - 0.03, -1.14, X(WICKET[1]) - 0.3, -1.35), (X(WICKET[1]) + 0.065, -(Z_S0 + 0.15), X(WICKET[1]) - 0.3, -0.35),
+                                         ((X(a) + X(b)) / 2, -(Z_S0 + 1.5), (X(a) + X(b)) / 2 + 0.28, -1.75), (X(WICKET[0]), 0.9, X(WICKET[0]) + 0.35, 1.05)], 1):
+        callout(d, x, y, tx, ty, n, C['wick'])
+    d.chainh([X(WICKET[1]), X(b), X(a), X(WICKET[0]), X(15.75)], -(Z_TOP + 0.3), 9, 18)
+    d.dimh(X(WICKET[1]) + 0.04, X(WICKET[0]) - 0.04, -(Z_TOP + 0.55), 'в свету 920', 9)
+    for n in (9, 10): d.tag(X(BYN[n]['x']), -(Z_TOP + 0.85), str(n), 9, C['wick'], 9)
+    d.tag(X(15.75), -(Z_TOP + 0.85), '8', 9, C['post'], 9)
+    for z in (Z_TOP, Z_S1, Z_S0, 0, Z_FRZ, Z_HEAD - 2.5): d.mark(xa + 0.5, z, zf(z), 9)
+    d.t(X(18.5), 2.5, 'вид со стороны участка', 10, 'm', C['mu'], True)
+    return d.out(xa, -(Z_TOP + 1.1), xb - xa, Z_TOP + 1.1 + 2.62, round((xb - xa) * sc), 'flex-shrink: 0; background: #FBF9F4; border: 1px solid #D6CEBF')
+
+
+def node_wicket_plan(sc=150):
+    d = D(sc); x0, x1, y0, y1 = 15.4, 19.9, FS - 1.35, 32.35
+    d.box(x0, y0, x1 - x0, y1 - y0, '#F4F0E4'); d.box(x0, 32, x1 - x0, y1 - 32, '#E9E4D8')
+    d.ln(x0, 32, x1, 32, 1, '#B3261E', '8 4')
+    d.box(WICKET[0] + 0.06, y0, WICKET[1] - WICKET[0] - 0.12, FS - 0.1 - y0, '#DCD3C1')
+    for a, b in [(x0, WICKET[0]), (WICKET[1], x1)]: d.ln(a, FS + 0.06, b, FS + 0.06, 3, C['sheet'])
+    for p in (BYN[8], BYN[9], BYN[10]):
+        tp = TYPES[p['t']]; P = PILES[tp[4]]
+        d.ring(p['x'], FS, P['blade'] / 2, tp[5], 0.8, 'none', '3 2'); d.box(p['x'] - tp[2] / 2, FS - tp[2] / 2, tp[2], tp[2], tp[5])
+    x0b, x1b, _, _, dep = SHG_BOX
+    d.box(x0b, FS + 0.07 - dep, x1b - x0b, dep, '#F2C230', C['ink'], 0.9); d.t(SHG[0], FS - 0.32, 'ШГ', 9.5, 'm', C['ink'], True)
+    r = WICKET[1] - WICKET[0] - 0.14; hx = WICKET[0] + 0.07
+    d.ln(hx, FS, hx, FS - r, 2.4, C['wick'])
+    d.add(f'<path d="M {hx + r:.3f} {FS:.3f} A {r:.3f} {r:.3f} 0 0 0 {hx:.3f} {FS - r:.3f}" style="fill:none;stroke:{C["wick"]};stroke-width:1px;vector-effect:non-scaling-stroke;stroke-dasharray:4 3"></path>')
+    d.add(f'<path d="M {hx:.3f} {FS - r:.3f} A {r:.3f} {r:.3f} 0 0 0 {hx - r:.3f} {FS:.3f}" style="fill:none;stroke:#B3261E;stroke-width:1px;vector-effect:non-scaling-stroke;stroke-dasharray:2 3"></path>')
+    d.box(hx - 0.05, FS - r - 0.1, 0.1, 0.06, C['ink'])
+    d.t(hx + 0.08, FS - r - 0.02, 'ограничитель 90° (упор в дорожку)', 9, '', C['ink'], halo=True)
+    d.t(hx - r + 0.05, FS - 0.1, 'без упора полотно ударит в ШГ', 9, '', '#B3261E', halo=True)
+    d.dimh(x1b, hx, FS + 0.2, mm(hx - x1b), 9, above=False)
+    d.t(x0 + 0.05, y0 + 0.2, 'план, калитка открывается внутрь участка', 10, '', C['mu'], True)
+    return d.out(x0, y0, x1 - x0, y1 - y0, round((x1 - x0) * sc), 'flex-shrink: 0; background: #FBF9F4; border: 1px solid #D6CEBF')
+
+
+def node_gate(sc=112):
+    """У4: откатные ворота — вид со стороны участка (x зеркально)."""
+    d = D(sc); X = lambda x: 52.0 - x
+    xa, xb = X(32.2), X(20.1)
+    d.box(xa, 0, xb - xa, 2.95, C['soil']); d.ln(xa, 0, xb, 0, 1.3); d.ln(xa, -Z_FRZ, xb, -Z_FRZ, 0.9, C['frz'], '6 4')
+    for n in (11, 12, 13, 14, 15): draw_support(d, X(BYN[n]['x']), BYN[n]['t'])
+    for x in EMB_PILES: draw_support(d, X(x), '108', head=Z_EMB, pile_only=True)
+    d.box(X(EMB[1]), 0, EMB[1] - EMB[0], -Z_EMB, '#9AA0A4', C['ink'], 0.8)
+    for a, b in [(20.1, GATE[0]), (GATE[1], FR)]:
+        for z in Z_LAG: d.box(X(b), -(z + 0.02), b - a, 0.04, C['lag'], C['ink'], 0.4)
+        d.box(X(b), -Z_S1, b - a, Z_S1 - Z_S0, C['sheet'], op=0.10)
+    # полотно (закрыто): рама, противовес-ферма, нижняя балка
+    L0, L1 = LEAF_CLOSED; B0 = GATE[0] - 0.1
+    d.box(X(L1), -Z_S1, L1 - B0, Z_S1 - Z_S0, C['sheet'], op=0.25)
+    d.box(X(L1), -Z_S1, L1 - B0, Z_S1 - Z_S0, 'none', C['gate'], 2.4)
+    for k in range(1, 3): d.ln(X(B0 + k * (L1 - B0) / 3), -Z_S1, X(B0 + k * (L1 - B0) / 3), -Z_S0, 1.2, C['gate'])
+    d.ln(X(L1), -1.15, X(B0), -1.15, 1.2, C['gate'])
+    d.pln([(X(L0), -0.14), (X(B0), -0.14), (X(B0), -Z_S1), (X(L0 + 0.25), -0.3), (X(L0), -0.14)], 2, C['gate'])
+    d.ln(X(L0), -0.13, X(L1), -0.13, 3.2, C['gate'])
+    for x in CARR: d.box(X(x) - 0.13, -0.12, 0.26, 0.12, C['gate'], C['ink'], 0.6)
+    d.box(X(L0) - 0.05, -0.2, 0.1, 0.1, C['ink'])                                           # концевой ролик
+    d.box(X(GATE[0]) - 0.06, -(Z_TOPV - 0.02), 0.2, 0.16, C['gate'], C['ink'], 0.6)         # верхние ролики
+    d.box(X(GATE[1]) - 0.1, -0.3, 0.12, 0.2, C['gate'], C['ink'], 0.6)                      # нижний улавливатель
+    d.box(X(GATE[1]) - 0.1, -(Z_S1 + 0.02), 0.12, 0.16, C['gate'], C['ink'], 0.6)           # верхний улавливатель
+    d.ln(X(L0), -0.26, X(L1), -0.26, 1, C['gate'], '2 2')                                   # зубчатая рейка (опция)
+    for n, (x, y, tx, ty) in enumerate([(X(CARR[0]), -0.06, X(CARR[0]) + 0.35, -0.5), (X(L0), -0.15, X(L0) + 0.35, -0.55),
+                                         (X(GATE[1]) - 0.04, -0.2, X(GATE[1]) - 0.4, -0.55), (X(GATE[1]) - 0.04, -(Z_S1 + 0.06), X(GATE[1]) - 0.4, -2.5),
+                                         (X(GATE[0]) + 0.1, -(Z_TOPV + 0.06), X(GATE[0]) + 0.45, -2.62), (X(sum(EMB) / 2), 0.08, X(sum(EMB) / 2) + 0.3, 0.55),
+                                         (X(L0 + 0.8), -0.62, X(L0 + 0.8) + 0.3, -1.0), (X(L0 + 2.5), -0.26, X(L0 + 2.5) + 0.3, -0.62)], 1):
+        callout(d, x, y, tx, ty, n, C['gate'])
+    for n in (11, 12, 13, 14, 15):
+        p = BYN[n]; d.tag(X(p['x']), -(Z_TOPV + 0.62), str(n), 9, TYPES[p['t']][5], 9)
+    for n, x in zip(EMB_N, EMB_PILES): d.tag(X(x), 0.62, str(n), 9, C['gate'], 9)
+    xs = [X(BYN[n]['x']) for n in (11, 12, 13, 14, 15)]
+    d.chainh(xs, -(Z_TOPV + 0.95), 9, 18)
+    d.chainh([X(EMB[1]), X(EMB_PILES[1]), X(EMB_PILES[0]), X(EMB[0])], 2.85, 9, 18, above=False)
+    d.chainh([X(GATE[1]), X(GATE[0]), X(L0)], -(Z_TOPV + 0.3), 9, 18)
+    for z in (Z_TOPV, Z_S1, 0, Z_EMB, Z_FRZ, Z_HEAD - 2.5, Z_EMB - 2.5): d.mark(xa + 0.55, z, zf(z), 9)
+    d.t(X(26.2), 2.8, 'вид со стороны участка, ворота закрыты', 10, 'm', C['mu'], True)
+    return d.out(xa, -(Z_TOPV + 1.25), xb - xa, Z_TOPV + 1.25 + 3.1, round((xb - xa) * sc), 'flex-shrink: 0; background: #FBF9F4; border: 1px solid #D6CEBF')
+
+WICKET_ITEMS = ['Петли усиленные, 2 шт, на столбе 9 (+0,400 и +1,900)', 'Замок накладной, ручка +1,000', 'Ответная планка на столбе 10',
+                'Упор-притвор на столбе 10 — полотно открывается только внутрь', 'Рама 40×40×2, ригель и раскос 40×20, обшивка С20', 'Свая СВС-89×2500 под каждым столбом калитки']
+GATE_ITEMS = ['Роликовые опоры, 2 шт, на закладной', 'Концевой ролик нижней балки', 'Нижний улавливатель на столбе 14', 'Верхний улавливатель на столбе 14',
+              'Верхние направляющие ролики на столбе 13', 'Закладная — швеллер 16П 2 000 полками вниз на сваях 54 и 55, верх ±0,000',
+              'Противовес 1 600 (ферма из трубы 60×40)', 'Зубчатая рейка — под привод (опция)']
+
+
+def node_niches(sc=130):
+    """У5: ниши ВРУ и ШГ в пролётах 7–8 и 8–9 — вид с улицы."""
+    d = D(sc); xa, xb = 12.75, 18.55
+    d.box(xa, 0, xb - xa, 2.2, C['soil']); d.ln(xa, 0, xb, 0, 1.3); d.ln(xa, -Z_FRZ, xb, -Z_FRZ, 0.9, C['frz'], '6 4')
+    for n in (7, 8, 9): draw_support(d, BYN[n]['x'], BYN[n]['t'])
+    draw_frame(d, xa, WICKET[0], cut=[(VRU_BOX[0], VRU_BOX[1], VRU_BOX[2], VRU_BOX[3]), (SHG_BOX[0], SHG_BOX[1], SHG_BOX[2], SHG_BOX[3])])
+    for (x0, x1, z0, z1, dep), fill, s in [(VRU_BOX, '#E8E3D6', 'ВРУ'), (SHG_BOX, '#F2C230', 'ШГ')]:
+        for x in (x0 - 0.02, x1 + 0.02): d.box(x - 0.02, -(Z_LAG[1] - 0.02), 0.04, Z_LAG[1] - Z_LAG[0] - 0.04, '#9AA0A4', C['ink'], 0.6)   # стойки 40×40
+        for z in (z0 - 0.02, z1 + 0.02): d.box(x0 - 0.04, -(z + 0.02), x1 - x0 + 0.08, 0.04, '#9AA0A4', C['ink'], 0.6)                    # ригели 40×40
+        d.box(x0 + 0.01, -z1 + 0.01, x1 - x0 - 0.02, z1 - z0 - 0.02, fill, C['ink'], 1.2)
+        d.t((x0 + x1) / 2, -(z0 + 0.12), s, 11, 'm', C['ink'], True)
+    x0, x1, z0, z1, _ = VRU_BOX
+    d.box(VRU[0] - 0.14, -(z0 + 0.45), 0.28, 0.14, '#FFFFFF', C['ink'], 0.8); d.t(VRU[0], -(z0 + 0.35), 'окно счётчика', 8.5, 'm', C['mu'])
+    d.ln(VRU[0], -z0, VRU[0], 0.7, 2.2, C['el'], '6 3'); d.ring(VRU[0], 0.7, 0.05, C['el'], 1.6, '#FFFFFF')
+    d.t(VRU[0] + 0.1, 0.62, 'кабель в гофре Ø63 до −0,70: с улицы — ввод, в участок — к ЩР-Д', 9, '', C['el'], halo=True)
+    x0, x1, z0, z1, _ = SHG_BOX
+    for k in range(5): d.ln(x0 + 0.12, -(z1 - 0.12 - k * 0.05), x1 - 0.12, -(z1 - 0.12 - k * 0.05), 0.8)
+    for dx in (-0.1, 0.1):
+        d.ln(SHG[0] + dx, -z0, SHG[0] + dx, -G1_DEPTH, 2.4, C['gas']); d.box(SHG[0] + dx - 0.03, -0.25, 0.06, 0.5, 'none', C['ink'], 0.8)
+    d.ring(SHG[0], -G1_DEPTH, 0.05, C['gas'], 1.6, '#FFFFFF')
+    d.t(SHG[0] + 0.18, -G1_DEPTH - 0.1, 'ввод от сети ГРО и выход Г1 на −1,55; футляры на выходе из земли', 9, '', C['gas'], halo=True)
+    d.chainh([13.5, VRU_BOX[0], VRU_BOX[1], 15.75, SHG_BOX[0], SHG_BOX[1], 18.0], -(Z_TOP + 0.25), 9, 18)
+    d.dimh(VRU_BOX[1], SHG_BOX[0], -(Z_TOP + 0.55), f'между шкафами {mm(SHG_BOX[0] - VRU_BOX[1])}', 9)
+    d.dimv(VRU_BOX[0] - 0.12, -VRU_BOX[3], -VRU_BOX[2], '650', 9); d.dimv(VRU_BOX[0] - 0.12, -VRU_BOX[2], 0, '900', 9)
+    d.dimv(SHG_BOX[1] + 0.12, -SHG_BOX[3], -SHG_BOX[2], '800', 9, left=False); d.dimv(SHG_BOX[1] + 0.12, -SHG_BOX[2], 0, '600', 9, left=False)
+    for n in (7, 8, 9): d.tag(BYN[n]['x'], -(Z_TOP + 0.85), str(n), 9, TYPES[BYN[n]['t']][5], 9)
+    for z in (Z_TOP, Z_LAG[1], VRU_BOX[3], SHG_BOX[3], VRU_BOX[2], SHG_BOX[2], Z_LAG[0], 0): d.mark(xa + 0.48, z, zf(z), 9)
+    d.t((xa + xb) / 2, 2.1, 'вид с улицы · шкафы дверцами на улицу, корпус — внутри участка', 10, 'm', C['mu'], True)
+    return d.out(xa, -(Z_TOP + 1.12), xb - xa, Z_TOP + 1.12 + 2.25, round((xb - xa) * sc), 'flex-shrink: 0; background: #FBF9F4; border: 1px solid #D6CEBF')
+
+
+def node_piles(sc=112):
+    """У6: сваи трёх типов."""
+    d = D(sc); keys = ['76', '89', '108']
+    xs = [0.55, 1.75, 2.95]
+    d.box(-0.1, 0, 3.75, 3.05, C['soil']); d.ln(-0.1, 0, 3.65, 0, 1.3)
+    for k, x in zip(keys, xs):
+        P = PILES[k]; tip = -P['L']
+        d.box(x - P['d'] / 2, 0, P['d'], P['L'] - 0.1, C['pile'], C['ink'], 0.6)
+        d.poly([(x - P['d'] / 2, -(tip + 0.1)), (x + P['d'] / 2, -(tip + 0.1)), (x, -tip)], C['pile'], C['ink'], 0.6)
+        d.poly([(x - P['blade'] / 2, -(tip + 0.2)), (x + P['blade'] / 2, -(tip + 0.26)), (x + P['blade'] / 2, -(tip + 0.28)), (x - P['blade'] / 2, -(tip + 0.22))], C['blade'], C['ink'], 0.6)
+        d.box(x - P['plate'] / 2, -0.01, P['plate'], 0.01, C['ink'])
+        d.t(x, -0.28, P['name'], 10, 'm', C['ink'], True)
+        d.t(x, -0.12, f'оголовок {mm(P["plate"])}×{mm(P["plate"])}×{mm(P["pt"])}', 9, 'm', C['mu'])
+        d.dimv(x - 0.2, 0, -tip, mm(P['L']), 9)
+        d.dimh(x - P['blade'] / 2, x + P['blade'] / 2, -tip + 0.12, f'Ø{mm(P["blade"])}', 9, above=False)
+        d.t(x + 0.08, 1.0, f'Ø{mm(P["d"])}×{P["wall"]}', 9, '', C['ink'], mono=True, halo=True)
+    d.t(1.75, 2.98, 'длина — от верха оголовка до острия наконечника', 9, 'm', C['mu'])
+    return d.out(-0.1, -0.45, 3.75, 3.5, round(3.75 * sc), 'flex-shrink: 0; background: #FBF9F4; border: 1px solid #D6CEBF')
+
+
+def typical_section(sc=101):
+    """Типовая секция: 2 пролёта боковой стороны, вид со стороны участка."""
+    d = D(sc); st = (FS - FB) / N_SIDE
+    xs = [0, st, 2 * st]; xa, xb = -1.05, 2 * st + 0.9
+    draw_ground(d, xa, xb, -2.3)
+    for x in xs: draw_support(d, x, 'А')
+    draw_frame(d, xs[0], xs[-1])
+    d.chainh(xs, -(Z_TOP + 0.3), 9.5, 20)
+    for n, (x, y, tx, ty) in enumerate([(xs[1], -1.2, xs[1] + 0.35, -1.45), (xs[1] + 0.8, -Z_LAG[1], xs[1] + 1.1, -2.05),
+                                         (0.6, -1.0, 0.95, -1.3), (xs[1], -Z_HEAD, xs[1] + 0.4, 0.35), (xs[1], 0.9, xs[1] + 0.4, 0.75),
+                                         (xs[1] + 0.1, -(Z_HEAD - 1.78), xs[1] + 0.45, 1.55), (xs[2], -(Z_TOP + 0.005), xs[2] - 0.35, -2.5)], 1):
+        callout(d, x, y, tx, ty, n)
+    for z in (Z_TOP, Z_S1, Z_LAG[1], Z_LAG[0], Z_S0, 0, Z_FRZ, Z_HEAD - 2.0): d.mark(xa + 0.55, z, zf(z), 9)
+    d.t(xs[2] + 0.5, -Z_FRZ - 0.06, 'промерзание', 9, 'm', C['frz'])
+    return d.out(xa, -(Z_TOP + 0.55), xb - xa, Z_TOP + 0.55 + 2.3, round((xb - xa) * sc), 'flex-shrink: 0; background: #FBF9F4; border: 1px solid #D6CEBF')
+
+
+SECTION_ITEMS = ['Столб 60×60×2, L = 2 094, верх +2,200, заглушка', 'Лаги 40×20×2 в 2 ряда (+0,450 и +1,850), сварка к столбам с уличной стороны',
+                 'Профлист С20 0,45 RAL 6005, лист 1 150 × 2 000, низ +0,150, П-планка сверху', 'Оголовок 150×150×6 на отметке +0,100, столб — на сварке по контуру',
+                 'Свая винтовая СВС-76×2000, ствол Ø76×3,5 — без бетона', 'Лопасть Ø200 ниже промерзания (−1,65…−1,70)', 'Шаг опор по осям — 2 446 (улица — 1 900…2 500)']
+
+
+def legend_list(items, c=C['ink'], start=1):
+    return '<div style="display: flex; flex-direction: column; gap: 5px">' + ''.join(
+        f'<div style="display: flex; gap: 8px; align-items: flex-start"><div class="mono" style="flex-shrink: 0; width: 18px; height: 18px; border-radius: 9px; background: {c}; color: #FFFFFF; font-size: 10.5px; font-weight: 600; display: flex; align-items: center; justify-content: center">{i}</div><div style="font-size: 12px; line-height: 1.4">{t}</div></div>'
+        for i, t in enumerate(items, start)) + '</div>'
+
+
+def types_table():
+    rows = []
+    for t, (what, sec, w, top, pk, col_) in TYPES.items():
+        P = PILES[pk]; n = sum(1 for p in SUP if p['t'] == t)
+        nums = ', '.join(str(p['n']) for p in SUP if p['t'] == t) if n <= 4 else 'остальные'
+        sw = f'<span style="display: inline-block; width: 10px; height: 10px; background: {col_}; margin-right: 6px"></span>'
+        rows.append(f'<tr><td>{sw}{t}</td><td>{what}<br><span style="color: #565C61">{nums}</span></td><td class="r">{n}</td><td>{P["name"]}</td><td class="r">{zf(Z_HEAD - P["L"])}</td><td>{sec}, L {mm(post_len(t))}</td><td class="r">{zf(top)}</td></tr>')
+    P = PILES['108']
+    rows.append(f'<tr><td>закл.</td><td>сваи закладной ворот<br><span style="color: #565C61">54, 55</span></td><td class="r">2</td><td>{P["name"]}</td><td class="r">{zf(Z_EMB - P["L"])}</td><td>швеллер 16П 2 000</td><td class="r">{zf(0)}</td></tr>')
+    return ('<table class="tb"><thead><tr><th>Тип</th><th>Опора</th><th class="r">Шт</th><th>Свая</th><th class="r">Низ сваи</th><th>Столб</th><th class="r">Верх</th></tr></thead><tbody>'
+            + ''.join(rows) + f'<tr class="sum"><td></td><td>Всего опор и свай</td><td class="r">{len(SUP) + len(EMB_PILES)}</td><td colspan="4"></td></tr></tbody></table>')
+
+
+def schedule(rows_):
+    out = ['<table class="tb"><thead><tr><th class="r">№</th><th>Тип</th><th class="r">x, м</th><th class="r">y, м</th><th>Свая</th><th class="r">Низ</th><th>Примечание</th></tr></thead><tbody>']
+    for p in rows_:
+        P = PILES[TYPES[p['t']][4]] if p['t'] in TYPES else PILES['108']
+        head = Z_HEAD if p['t'] in TYPES else Z_EMB
+        out.append(f'<tr><td class="r">{p["n"]}</td><td>{p["t"]}</td><td class="r">{nf(p["x"], 3)}</td><td class="r">{nf(p["y"], 3)}</td><td>{P["name"]}</td><td class="r">{zf(head - P["L"])}</td><td style="font-size: 11.5px">{"; ".join(p["note"])}</td></tr>')
+    return ''.join(out) + '</tbody></table>'
+
+
+def all_rows():
+    return SUP + [dict(n=n, t='закл.', x=x, y=LEAF_Y, note=['свая закладной ворот', 'швеллер 16П полками вниз, верх ±0,000']) for n, x in zip(EMB_N, EMB_PILES)]
+
+
+def crossings_table():
+    groups = [(None, [(f'{name}: {who}', f'≥ {nf(need, 1)}', nf(dd, 2), dd >= need - 1e-6, why) for name, who, dd, need, why in util_checks()])]
+    return check_table(groups, 'Сеть — ближайшая свая (в свету от лопасти), м')
+
+
+def runs_table():
+    rows = ''.join(f'<tr><td>{r["name"]}</td><td class="r">{nf(r["len"], 2)}</td><td class="r">{r["spans"]}</td><td class="r">{r["sheets"]}</td></tr>' for r in RUNS)
+    c = calc()
+    return ('<table class="tb"><thead><tr><th>Участок (опоры)</th><th class="r">По осям, м</th><th class="r">Пролётов</th><th class="r">Листов</th></tr></thead><tbody>'
+            + rows + f'<tr class="sum"><td>Итого</td><td class="r">{nf(c["L"], 2)}</td><td class="r">{sum(r["spans"] for r in RUNS)}</td><td class="r">{c["sheets"]}</td></tr></tbody></table>')
+
+
+def spec_html():
+    c = calc(); out = ['<table class="tb"><thead><tr><th>№</th><th>Наименование</th><th>Ед.</th><th class="r">Кол-во</th><th class="r">Цена, ₽</th><th class="r">Сумма, ₽</th></tr></thead><tbody>']
+    n = 0; tot = 0
+    def qf(v): return str(int(v)) if float(v).is_integer() else (nf(v, 1) if rnd(v, 1) == v else nf(v, 2))
+    for g, items in [('Материалы', c['mats']), ('Работы', c['works'])]:
+        out.append(f'<tr class="grp"><td colspan="6">{g}</td></tr>'); sub = 0
+        for name, unit, q, price in items:
+            n += 1; sm = rnd(q * price); sub += sm
+            out.append(f'<tr><td>{n}</td><td>{name}</td><td>{unit}</td><td class="r">{qf(q)}</td><td class="r">{fmt(price) if float(price).is_integer() else nf(price, 1)}</td><td class="r">{fmt(sm)}</td></tr>')
+        out.append(f'<tr class="sum"><td></td><td>Итого {g.lower()}</td><td></td><td></td><td></td><td class="r">{fmt(sub)}</td></tr>'); tot += sub
+    out.append(f'<tr class="tot"><td></td><td>Всего по забору</td><td></td><td></td><td></td><td class="r">{fmt(tot)}</td></tr></tbody></table>')
+    return ''.join(out)
+
+
+def wind_table():
+    w = wind()
+    rows = [('Ветровое давление на глухой забор (I район, местность B, c = 1,4, γf = 1,4)', f'{nf(w["w"], 3)} кПа'),
+            (f'Нагрузка на столб: пролёт {mm(w["step"])} × лист 2,0 м', f'{nf(w["F"], 2)} кН'),
+            (f'Момент у оголовка, плечо {nf(w["arm"], 2)} м', f'{nf(w["M"], 2)} кН·м'),
+            (f'Столб 60×60×2 (W = {nf(w["W60"], 2)} см³): напряжение ≤ 230 МПа', f'{nf(w["s60"], 0)} МПа'),
+            (f'Свая Ø76×3,5 (W = {nf(w["Wp"], 2)} см³)', f'{nf(w["spile"], 0)} МПа')]
+    return '<table class="tb"><tbody>' + ''.join(f'<tr><td>{a}</td><td class="r">{b}</td></tr>' for a, b in rows) + '</tbody></table>'
+
+
+MONTAGE = [
+    '<b>Разбивка.</b> Вызвать трассоискатель, отметить вешками сети у забора: выпуск ЛОС (x = 2,6), кабель ВРУ (x = 14,3), газ (x = 16,875), В1 к соседу (y = 21,0), В1 в баню (0,9 м от правой линии). Вынести ось забора в 0,1 м от границы и все 55 точек по ведомости (лист 02.1).',
+    '<b>Пробное закручивание</b> 2–3 свай: момент — по паспорту сваи. При недоборе (слабый грунт) — сваю на 0,5 м длиннее или СВС-89.',
+    '<b>Сваи.</b> Вертикальность ±1°, отклонение оси вдоль линии ±20 мм, поперёк ±10 мм. Сваи 2, 7, 8, 9, 19, 20 и у закладной — вручную, после шурфа до сети.',
+    '<b>Отметки.</b> Обрезать ствол по нивелиру: оголовки опор +0,100 от земли у опоры (±10 мм), свай закладной −0,160. Приварить оголовки, сварные швы — грунт-эмалью.',
+    '<b>Столбы</b> на оголовки: сварка по контуру, вертикаль — 3 мм на 2 м, верх по шнуру +2,200 (ворота +2,350). На уклоне — верх ступенями по пролётам.',
+    '<b>Лаги</b> 40×20 в 2 ряда (+0,450 и +1,850) с уличной стороны столбов, стыки лаг — только на столбах; окраска 2 слоя.',
+    '<b>Ниши ВРУ и ШГ:</b> обрамление 40×40, шкафы дверцами на улицу; газовый шкаф и врезку делает организация с допуском по ТУ.',
+    '<b>Профлист</b> — саморезами по 6 шт на лист на лагу, нахлёст в одну волну, П-планка сверху, уголки на углах и по краям ниш.',
+    '<b>Ворота:</b> закладную 16П приварить к оголовкам свай 54, 55 (горизонт ±2 мм, верх ±0,000), роликовые опоры, полотно, улавливатели, регулировка. <b>Калитка:</b> петли на столбе 9, замок, упор, ограничитель 90°.',
+]
+
+
+# ================= листы =================
+BOX = 'display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: #FBF9F4; border: 1px solid #D6CEBF'
+
+
+def kpi(v, s):
+    return f'<div style="{BOX}"><div class="mono" style="font-size: 24px; font-weight: 500">{v}</div><div style="font-size: 12px; color: #565C61">{s}</div></div>'
+
+
+def small(t):
+    return f'<div style="font-size: 12px; line-height: 1.45; color: #565C61">{t}</div>'
+
+
+H = {'Fence.dc.html': 2080, 'FencePlan.dc.html': 3180, 'FenceElev.dc.html': 2280, 'FenceNodes.dc.html': 3680}
+
+
+def boards():
+    c = calc(); m, w, tot = cost(); n_all = len(SUP) + len(EMB_PILES)
+    out = {}
+    # ---------- 02 ----------
+    body = header('Забор из профлиста на винтовых сваях',
+                  f'Периметр участка 32 × 32 м, ось опор — в 0,1 м внутрь от границы. {len(SUP)} опор и 2 сваи закладной ворот — все на винтовых сваях, без бетона. Откатные ворота 4,0 м, калитка 1,0 м, ниши под ВРУ и газовый шкаф. Сборочные чертежи — листы 02.1–02.3.', '02')
+    body += '<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px">' + kpi(f'{nf(c["L"], 1)} м', 'длина забора по осям опор, без проёмов') + \
+        kpi(f'{len(SUP)} + 2', f'опоры на сваях (СВС-76 — {c["p76"]}, СВС-89 — {c["p89"]}, СВС-108 — {c["p108"]})') + \
+        kpi(str(c['sheets']), f'листов профнастила, {nf(c["area"], 1)} м²') + kpi(f'{fmt(tot / c["L"])} ₽', 'за погонный метр, всё включено') + \
+        kpi(f'{fmt(tot)} ₽', 'итого: материалы и работы') + '</div>'
+    left = h2('Типовая секция · вид со стороны участка') + typical_section() + legend_list(SECTION_ITEMS) + \
+        h2('Участки забора', '6px 0 0') + runs_table() + h2('Типы опор', '6px 0 0') + types_table() + \
+        h2('Проверка столба и сваи на ветер', '6px 0 0') + wind_table() + \
+        small('СП 20.13330.2016: w₀ = 0,23 кПа, k(z ≤ 5 м, B) = 0,5. Запас по напряжениям в столбе — 1,7 раза. Устойчивость сваи в грунте подтверждается пробным закручиванием (момент — по паспорту сваи).')
+    right = h2('Решения') + notes([
+        '1. <b>Сваи вместо бетонирования.</b> Все столбы стоят на винтовых сваях: без бурения, бетона и выдержки 7 суток; лопасть ниже промерзания (1,4 м) — сваю не выдавливает пучением. Монтаж забора можно начинать в день закручивания.',
+        f'2. <b>Сваи трёх типов:</b> СВС-76×2000 под рядовые и угловые столбы 60×60×2, СВС-89×2500 под столбы калитки 80×80×3, СВС-108×2500 под столбы ворот и закладную. Оголовки на +0,100, у закладной — на −0,160.',
+        '3. <b>Разбивка опор</b> — по ведомости с координатами (лист 02.1): на улице пролёты подобраны так, чтобы сваи не попадали на выпуск ЛОС, кабель ВРУ и газ; на боковых и тыльной сторонах — по 13 пролётов 2 446 мм.',
+        '4. <b>Калитка</b> — между воротами и газовым шкафом (оси 18,0–19,0), напротив дорожки к крыльцу; открывается внутрь, ограничитель 90° не даёт полотну ударить в ШГ.',
+        '5. <b>Откатные ворота</b> 4,0 м (оси 26,5–30,5): полотно 4,1 м с противовесом 1,6 м откатывается влево по участку, зона отката 7,5 м до калитки свободна; закладная — на двух сваях, без бетонного ростверка.',
+        '6. <b>ВРУ и ШГ</b> встроены в линию забора: шкафы дверцами на улицу, корпус внутри участка, между шкафами 1,9 м. Кабель и газ выходят в пролётах, в 0,7–1,0 м от лопастей свай.',
+        '7. Глухой забор 2 м по границам с соседями — по ПЗЗ Чеховского г. о. и согласованию с соседями (проверить допустимую высоту).',
+    ]) + h2('Спецификация и стоимость', '6px 0 0') + spec_html() + small('Цены ориентировочные: розница Московской обл., сентябрь 2026. Лист С20 — ширина 1,15 м, полезная 1,10 м. Сваи — с заводским антикоррозийным покрытием и оголовком.')
+    body += row(col(left, 12, 'width: 700px; flex-shrink: 0') + col(right, 12, 'flex-grow: 1; min-width: 0'))
+    out['Fence.dc.html'] = page('Забор из профлиста', 1440, H['Fence.dc.html'], body)
+    # ---------- 02.1 ----------
+    body = header('Забор · план опор и ведомость', f'Разбивка всех {n_all} опор и свай с координатами, привязки к сетям и сооружениям. x — от левой границы, y — от тыльной границы (угол н2), м.', '02.1')
+    lg = ''.join(f'<div style="display: flex; gap: 8px; align-items: center; font-size: 12px"><span style="width: 14px; height: 14px; background: {c_}; flex-shrink: 0"></span>{t}</div>'
+                 for c_, t in [(TYPES['А'][5], 'опоры типов А и У: столб 60×60×2 на СВС-76'), (TYPES['К'][5], 'опоры калитки К: столб 80×80×3 на СВС-89'),
+                               (TYPES['В1'][5], 'опоры ворот В1, В2 и сваи закладной 54, 55: СВС-108'), (C['sheet'], 'линия профлиста — с уличной (наружной) стороны опор'),
+                               ('#B3261E', 'граница участка (пунктир)')])
+    right = h2('Обозначения') + col(lg, 6) + small('Кружок пунктиром — лопасть сваи в масштабе. Номер опоры — снаружи линии забора. Цепочки размеров — между осями опор, мм.') + \
+        h2('Расстояния до сетей и сооружений', '6px 0 0') + crossings_table() + \
+        small('Проверено для каждой из 55 свай; в таблице — ближайшая к каждой сети. Сваи рядом с сетями закручивать вручную после шурфа.')
+    body += row(col(h2('План забора') + site_plan(), 10, 'width: 890px; flex-shrink: 0') + col(right, 10, 'flex-grow: 1; min-width: 0'))
+    body += col(h2('Уличный забор крупно · опоры 1–9') + street_plan(-0.9, 18.2) + h2('Уличный забор крупно · опоры 8–15, ворота и калитка') + street_plan(13.9, 33.0), 10)
+    rows_ = all_rows(); half = 27
+    body += col(h2('Ведомость опор и свай') + row(col(schedule(rows_[:half]), 0, 'flex: 1; min-width: 0') + col(schedule(rows_[half:]), 0, 'flex: 1; min-width: 0'), 20) +
+                small('Отметки — от уровня земли у опоры. Низ сваи — острие наконечника. Примечание к опоре — ближайшие сети в свету от лопасти, м.'), 10)
+    out['FencePlan.dc.html'] = page('Забор: план опор', 1440, H['FencePlan.dc.html'], body)
+    # ---------- 02.2 ----------
+    body = header('Забор · развёртки по сторонам', 'Каждая опора в масштабе: свая, лопасть, оголовок, столб, лаги; профлист показан условно, полупрозрачным. Отметки от уровня земли, размеры между осями опор, мм.', '02.2')
+    body += h2('Уличный забор · вид с улицы · опоры 1–8') + elevation('street', -1.9, 17.2, 71.1, zmax=3.75, zmin=-3.35)
+    body += h2('Уличный забор · опоры 8–15: калитка, зона отката, ворота (противовес за забором — пунктир)') + elevation('street', 14.75, 33.0, 71.1, zmax=3.75, zmin=-3.35)
+    for side in ('right', 'back', 'left'):
+        body += h2(SIDE_NAME[side]) + elevation(side, -2.1, 33.9, 37.7, zmax=2.95, zmin=-2.75)
+    body += small('Сваи: СВС-76×2000 — низ −1,900; СВС-89×2500 и СВС-108×2500 у калитки и ворот — низ −2,400; сваи закладной 54, 55 — низ −2,660. Промерзание −1,400 (синий пунктир). Сети, пересекающие линию забора, — кружками на своей глубине.')
+    out['FenceElev.dc.html'] = page('Забор: развёртки', 1440, H['FenceElev.dc.html'], body)
+    # ---------- 02.3 ----------
+    body = header('Забор · узлы', 'Опора на винтовой свае, угол, калитка, откатные ворота на закладной без бетона, ниши ВРУ и ШГ, сваи. Порядок монтажа и допуски.', '02.3')
+    body += row(col(h2('Узел 1 · опора типа А') + node_post(), 10, 'flex-shrink: 0') + col(h2('Узел 2 · угловая опора (н1), план') + node_corner(), 10, 'flex-shrink: 0'), 24)
+    body += row(col(h2('Узел 3 · калитка') + node_wicket(125), 10, 'flex-shrink: 0') + col(h2('Калитка в плане') + node_wicket_plan() + legend_list(WICKET_ITEMS, C['wick']), 10, 'flex-grow: 1; min-width: 0'), 24)
+    body += col(h2('Узел 4 · откатные ворота на закладной и сваях') + node_gate() +
+                '<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px">' + legend_list(GATE_ITEMS[:4], C['gate']) +
+                legend_list(GATE_ITEMS[4:], C['gate'], 5) + '</div>', 10)
+    body += row(col(h2('Узел 5 · ниши ВРУ и ШГ') + node_niches(), 10, 'flex-shrink: 0') + col(h2('Узел 6 · сваи') + node_piles(), 10, 'flex-shrink: 0'), 24)
+    body += col(h2('Порядок монтажа и допуски') + '<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 24px; font-size: 12.5px; line-height: 1.45">' +
+                ''.join(f'<div>{i}. {t}</div>' for i, t in enumerate(MONTAGE, 1)) + '</div>', 10)
+    out['FenceNodes.dc.html'] = page('Забор: узлы', 1440, H['FenceNodes.dc.html'], body)
+    return out

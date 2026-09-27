@@ -1,5 +1,6 @@
 from common import *
 from calc import *
+import fence
 import plan, re
 orig = src('Gas.dc.html')
 main = src('Main.dc.html')
@@ -39,7 +40,8 @@ s.rect(VRU[0]-0.4, 31.75, 0.8, 0.5, 'vru'); s.text(VRU[0]-0.5, 31.5, 'ВРУ', '
 s.pl([(7, 32), (18, 32)], 'fnc'); s.pl([(19, 32), (26.5, 32)], 'fnc'); s.pl([(30.5, 32), (32, 32), (32, 15)], 'fnc'); s.pl([(26.5, 32), (30.5, 32)], 'gate')
 s.add('<path class="arc" d="M 18 32 L 18 31 A 1 1 0 0 1 19 32"></path>'); s.text(18.5, 33.35, 'калитка', 'ts mid')
 s.pl([(26.2, 31.1), (19.4, 31.1)], 'arrow'); s.pg([(19.1, 31.1), (19.6, 30.88), (19.6, 31.32)], 'arrowh'); s.text(23.9, 30.8, 'зона отката ворот — ШГ вне её', 'ts mid mu')
-for px in [9, 11.25, 13.5, 15.75, 18, 19, 21.5, 24, 26.5, 30.5, 32]: s.rect(px-0.13, 31.87, 0.26, 0.26, 'post')
+for p in fence.SUP:
+    if p['side'] == 'street' and p['x'] > 8: s.rect(p['x']-0.13, p['y']-0.13, 0.26, 0.26, 'post')
 s.text(21.3, 23.0, 'К1 бани', 'ts k1c'); s.text(24.0, 20.75, 'В1 −1,8', 'ts v1c'); s.text(14.05, 29.2, 'кабель ВРУ', 'ts elc', rot=-90)
 s.text(12.95, 28.2, 'выпуск К1 дома', 'ts k1c end')
 def chk(a, b, t, tx, ty):
