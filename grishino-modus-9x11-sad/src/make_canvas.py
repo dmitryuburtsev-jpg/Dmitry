@@ -13,7 +13,7 @@ rows = [(['Main.dc.html', 'Visual.dc.html', 'Fence.dc.html'], [-400, 1520, 3040]
         (['Budget.dc.html', 'Gazebo.dc.html', 'House.dc.html'], [0, 1520, 3040]),
         (['Bath.dc.html', 'Gas.dc.html', 'Check.dc.html'], [0, 1520, 3040])]
 titles = {k: v.get('title') for k, v in c['boards'].items()}
-titles.update({'Fence.dc.html': 'Забор на винтовых сваях', 'FencePlan.dc.html': 'Забор: план опор', 'FenceElev.dc.html': 'Забор: развёртки', 'FenceNodes.dc.html': 'Забор: узлы'})
+titles.update({'Fence.dc.html': 'Забор из профлиста С8', 'FencePlan.dc.html': 'Забор: план опор', 'FenceElev.dc.html': 'Забор: развёртки', 'FenceNodes.dc.html': 'Забор: узлы'})
 titles['House.dc.html'] = 'Дом каркасный 9,0×11,5'; titles['Check.dc.html'] = 'Проверка сетей'
 boards = {}; y = 0
 for names, xs in rows:
