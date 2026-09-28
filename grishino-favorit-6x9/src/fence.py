@@ -422,7 +422,7 @@ def site_plan(sc=22.9, x0=-3.4, y0=-3.3, w=38.8, h=39.4):
     for pg in (HEATED, TERRACE): d.poly(pg, '#E2D6BE', C['mu'], 0.6)
     for r in (BATH, GAZEBO, SHED, PARK): d.box(*r, '#ECE6D8', C['mu'], 0.6)
     d.box(*LOS, '#FFFFFF', C['k1'], 0.8); d.box(30.45, 20.45, 1.1, 1.1, '#FFFFFF', C['v1'], 0.8); d.ring(*WELL, 0.3, C['v1'], 1.2)
-    for tx, ty, s in [(13.5, 21.5, 'дом'), (27.6, 4.6, 'баня'), (6.5, 9.2, 'беседка'), (4.0, 2.3, 'хозблок'), (28.2, 28.4, 'стоянка'), (2.6, 29.0, 'ЛОС'), (29.9, 20.1, 'скважина')]:
+    for tx, ty, s in [(13.5, 21.5, 'дом'), (27.6, 4.6, 'баня'), (GAZEBO[0] + GAZEBO[2]/2, GAZEBO[1] + GAZEBO[3]/2 + 0.3, 'беседка'), (4.0, 2.3, 'хозблок'), (28.2, 28.4, 'стоянка'), (2.6, 29.0, 'ЛОС'), (29.9, 20.1, 'скважина')]:
         d.t(tx, ty, s, 10, 'm', C['mu'])
     for name, short, pts, z, need, why in UTIL:                                          # сети
         c = C['gas'] if 'газ' in short else C['v1'] if 'В1' in short else C['el'] if 'кабель' in short else C['k1']
