@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Проверка сетей</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+
+
+body{margin:0;background:#F3EFE6;color:#1E2528;font-family:'IBM Plex Sans',system-ui,sans-serif}
+a{color:#1D5FA0}a:hover{color:#123F6B}
+.hd{font-family:'IBM Plex Sans Condensed',sans-serif}
+.mono{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+table.tb{border-collapse:collapse;width:100%;font-size:12.5px;line-height:1.35}
+table.tb th{font:600 10.5px/1.3 'IBM Plex Sans Condensed',sans-serif;text-transform:uppercase;letter-spacing:.05em;color:#565C61;text-align:left;padding:5px 7px;border-bottom:1.5px solid #1E2528}
+table.tb td{padding:4px 7px;border-bottom:1px solid #D6CEBF;vertical-align:top}
+table.tb .r{text-align:right;white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:12px}
+table.tb tr.grp td{font:600 12px 'IBM Plex Sans Condensed',sans-serif;text-transform:uppercase;letter-spacing:.04em;padding-top:10px;border-bottom:1.5px solid #1E2528}
+table.tb tr.sum td{font-weight:600;border-bottom:1.5px solid #1E2528}
+table.tb tr.tot td{font-weight:700;font-size:14px;border-top:2px solid #1E2528;border-bottom:none;padding-top:8px}
+.ok{color:#2F6B2F;font-weight:600}
+.warn{color:#9A5B00;font-weight:600}
+.ph{background:#F7E7B4;padding:0 3px;border-radius:2px}
+svg text{font-family:'IBM Plex Sans Condensed',sans-serif;fill:#1E2528}
+svg .mid{text-anchor:middle}
+svg .end{text-anchor:end}
+svg .mu{fill:#565C61}
+svg .b{font-weight:600}
+
+.bad{color:#B3261E;font-weight:600}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1230px; box-sizing: border-box; padding: 36px 40px; display: flex; flex-direction: column; gap: 20px; background: #F3EFE6">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; border-bottom: 2px solid #1E2528; padding-bottom: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div class="hd" style="font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: #565C61">Гришино-Модуль 9,9×8,6 · д. Гришино · КН 50:31:0010104:5239</div>
+<h1 class="hd" style="margin: 0; font-size: 34px; font-weight: 700; line-height: 1.05">Проверка сетей</h1>
+<div style="font-size: 13.5px; color: #565C61">Первый проект: модульный дом 9,9×8,6 из трёх модулей, терраса в сад, вход и крыльцо со стороны калитки. Что изменилось в сетях, какие ошибки найдены и исправлены, что остаётся решить.</div>
+</div>
+<div class="hd" style="font-size: 44px; font-weight: 700; color: #1E2528; line-height: 1">11</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: #1E2528; color: #F3EFE6"><div class="mono" style="font-size: 26px; font-weight: 500">12 640 828 ₽</div><div style="font-size: 12px">смета участка (было 12 444 556 ₽)</div></div>
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: #FBF9F4; border: 1px solid #D6CEBF"><div class="mono" style="font-size: 26px; font-weight: 500">3</div><div style="font-size: 12px; color: #565C61">ошибок найдено и исправлено</div></div>
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: #FBF9F4; border: 1px solid #D6CEBF"><div class="mono" style="font-size: 26px; font-weight: 500">0</div><div style="font-size: 12px; color: #565C61">пересечений В1 с К1 — футляр не нужен</div></div>
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: #FBF9F4; border: 1px solid #D6CEBF"><div class="mono" style="font-size: 26px; font-weight: 500">53 / 7,6 / 11,6 м</div><div style="font-size: 12px; color: #565C61">К1 наружная / Г1 под землёй / траншея В1</div></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px"><h2 class="hd" style="margin: 0; font-size: 17px; font-weight: 600">Что изменилось по сравнению с первым вариантом</h2><table class="tb"><thead><tr><th>Сеть / объект</th><th>Было</th><th>Стало</th></tr></thead><tbody><tr><td>Забор</td><td>профлист С20, столбы в бетоне, шаг 2,5 м</td><td>49 столбов забивкой в лунку Ø200 × 0,8 м со щебнем до −1,5 м (ниже промерзания 1,4 м), винтовые сваи — только калитка, ворота и закладная; лаги 40×20×1,5, лист С8 0,4; без бетона; сборочные чертежи 02.1–02.3</td></tr><tr><td>Беседка и мангал</td><td>беседка 5×4 — в саду, в 3,7 м от хозблока; мангал — внутри беседки</td><td>беседка — в одном ряду с хозблоком у тыльной границы (1,0 м), в 1,4 м от хозблока; между ней и баней — мангальная зона № 13 на брусчатке, от очага 5,2 м до ступеней беседки и 5,2 м до бани</td></tr><tr><td>Канализация К1 бани</td><td>КК-Б → КК-1 → КК-2 между домом и скважиной, выпуск бани −0,55</td><td>КК-Б → КК-5 → КК-3: за домом со стороны сада и по левой стороне участка, 41,8 м; до дома и террасы 3,0 м, до скважины 12,3 м; выпуск бани −0,50, вход в ЛОС −1,36</td></tr><tr><td>Водопровод В1</td><td>пересекал К1 бани у дома — стальной футляр по 5 м в обе стороны</td><td>та же траншея 11,55 м к правой стене и 12,8 м по подполью до бойлерной; с К1 не пересекается — футляр не нужен</td></tr><tr><td>Электрика</td><td>кабельные траншеи ≈ 66 м; кабели к беседке и хозблоку — через сад</td><td>траншеи 59,0 м; развилка на 10,4 м от тыльной границы, общая ветка беседки и хозблока — перед беседкой; под линией бани кабели в гофре на −0,90 и −1,08</td></tr><tr><td>Газ Г1</td><td>ШГ слева, Г1 к левой стене; под К1 и под кабелем к ЛОС</td><td>трасса та же, 7,6 м; под магистралью К1 в 0,56 м, кабель к ЛОС идёт у левой стены и Г1 не пересекает</td></tr><tr><td>Кабель к ЛОС</td><td>пересекал выпуск К1 дома у фасада и проходил над Г1</td><td>выходит из подполья у левой стены, над линией бани в гофре (0,41 м); Г1 не пересекает, до него 1,3 м</td></tr><tr><td>Дорожки сада</td><td>к беседке — от террасы через сад</td><td>поперечная дорожка вдоль ряда хозблок — беседка — мангал — баня; от ступеней беседки — к площадке мангала</td></tr><tr><td>Смета участка</td><td>12 444 556 ₽</td><td>12 640 828 ₽</td></tr></tbody></table></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><h2 class="hd" style="margin: 0; font-size: 17px; font-weight: 600">Найденные ошибки — исправлены</h2><table class="tb"><thead><tr><th>Что было не так</th><th>Требование</th><th>Как исправлено</th></tr></thead><tbody><tr><td>Линия К1 бани между домом и скважиной шла в 1,6 м от фундамента дома</td><td>СП 42.13330, табл. 12.6: ≥ 3,0 м</td><td>в полосе между домом и скважиной нельзя выдержать сразу 3 м до дома и 10 м до скважины — линия обходит дом со стороны сада: 3,0 м до террасы, 12,3 м до скважины</td></tr><tr><td>Кабель бани пересекал К1 бани с зазором ≈ 0,05 м</td><td>ПУЭ 2.3.86: в трубе ≥ 0,25 м</td><td>кабель на пересечении заглублён до −0,90 в гофре — зазор 0,30 м; так же под линией бани проходит магистраль кабелей к постройкам (0,30 м)</td></tr><tr><td>Мангал стоял внутри деревянной беседки</td><td>ППР РФ (ПП № 1479), прил. 4: очаг — не ближе 5 м к постройкам, очистка 2 м вокруг</td><td>мангальная зона № 13 вынесена на площадку из брусчатки между беседкой и баней: 5,2 м до ступеней беседки, 5,2 м до бани, 2,0 м негорючего покрытия вокруг очага</td></tr></tbody></table></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><h2 class="hd" style="margin: 0; font-size: 17px; font-weight: 600">Осталось решить</h2><table class="tb"><thead><tr><th>Вопрос</th><th>Что сделать</th></tr></thead><tbody><tr><td>Разбивка К1 бани</td><td>линия проходит ровно в 3,0 м от террасы и дома — выносить геодезистом вместе с домом и сваями террасы.</td></tr><tr><td>Вход в ЛОС</td><td>−1,36 при пределе «Лонг» −1,40: запас 0,045 м. Выпуск бани −0,50 — заложить в УШП бани; уклон 0,02 не завышать, если выйдет глубже — исполнение «Супер Лонг».</td></tr><tr><td>Бойлерная</td><td>окно 0,6×0,8, дверь ≥ 0,8, высота ≥ 2,5, проходки Г1 и дымохода — заказать на заводе модулей до изготовления (лист 10).</td></tr><tr><td>ТУ Мособлгаза</td><td>место ШГ (слева, против бойлерной), давление в сети, котёл 24 кВт.</td></tr><tr><td>ПЗЗ и цена дома</td><td>процент застройки 15,0 % — сверить с градпланом; 6 511 400 ₽ за дом — ориентир, заменить сметой изготовителя модулей.</td></tr><tr><td>Мангальная зона</td><td>уточнить в администрации поселения местный порядок использования открытого огня; в особый противопожарный режим мангал не разжигать. Разбивку беседки и площадки вести от бани: запас к 5 м от очага — 0,2 м.</td></tr></tbody></table></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview": {"width": 1440, "height": 1230}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

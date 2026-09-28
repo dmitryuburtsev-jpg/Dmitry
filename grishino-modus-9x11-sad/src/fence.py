@@ -161,7 +161,26 @@ for p in SUP:   # примечания о сетях рядом с опорой 
         d = poly_d((p['x'], p['y']), pts) - blade(p) / 2
         if d < 1.5:
             p['note'].append(f'{short} — {nf(d, 2)} м')
-for n, t in [(7, 'ниша ВРУ в пролёте 7–8'), (8, 'ниши ВРУ и ШГ по сторонам'), (9, 'калитка: петли, ограничитель 90°'),
+def niche_span(box):
+    """номера опор пролёта, в котором стоит ниша шкафа"""
+    st = [p for p in SUP if p['side'] == 'street']
+    for a, b in zip(st, st[1:]):
+        if a['x'] < box[0] and box[1] < b['x']: return a['n'], b['n']
+    raise ValueError(box)
+
+
+NICHES = sorted([('ВРУ', VRU_BOX, niche_span(VRU_BOX)), ('ШГ', SHG_BOX, niche_span(SHG_BOX))], key=lambda v: v[1][0])
+ADJ = NICHES[0][2][1] == NICHES[1][2][0]                   # ниши в соседних пролётах (общая опора между ними)
+NICHE_GAP = NICHES[1][1][0] - NICHES[0][1][1]              # между шкафами в свету, м
+SPECIAL = {9, 10, 11, 12, 13, 14}                          # опоры калитки и ворот — у них свои примечания
+WICKET_NICHE = max((v for v in NICHES if v[1][1] < WICKET[0]), key=lambda v: v[1][1])   # ближайший шкаф левее калитки
+_reach = (WICKET[0] + 0.07) - (WICKET[1] - WICKET[0] - 0.14)                             # полотно, распахнутое на 180°
+WICKET_HITS = _reach - WICKET_NICHE[1][1] < 0.10                                         # без упора ударит в шкаф
+_nn = []
+for k, (s_, box, (a, b)) in enumerate(NICHES):
+    _nn.append((a, f'ниши {NICHES[k - 1][0]} и {s_} по сторонам' if ADJ and k == 1 else f'ниша {s_} в пролёте {a}–{b}'))
+    if not (ADJ and k == 0) and b not in SPECIAL: _nn.append((b, f'ниша {s_} в пролёте {a}–{b}'))
+for n, t in _nn + [(9, 'калитка: петли, ограничитель 90°'),
              (10, 'калитка: замок, упор'), (11, 'зона отката: полотно проходит с внутренней стороны'),
              (12, 'зона отката: полотно проходит с внутренней стороны'), (13, 'верхние направляющие ролики'),
              (14, 'нижний и верхний улавливатели')]:
@@ -577,7 +596,8 @@ def street_plan(x0, x1, sc=71.1, y0=29.75, y1=34.35):
     d.chainh([EMB[0], EMB_PILES[0], EMB_PILES[1], EMB[1], GATE[0]], 33.55, 9, 18)
     d.t(EMB[0] - 0.1, 33.5, 'закладная 16П 2 000, сваи 54, 55', 9, 'e', C['ink'])
     d.chainh([VRU_BOX[0], VRU_BOX[1], SHG_BOX[0], SHG_BOX[1]], 33.55, 9, 18)
-    d.chainh([13.5, VRU[0], 15.75, SHG[0], 18.0], 34.05, 9, 18)
+    for s_, box, (a, b) in NICHES:                  # привязка шкафов к осям опор своего пролёта
+        d.chainh([BYN[a]['x'], (box[0] + box[1]) / 2, BYN[b]['x']], 34.05, 9, 18)
     return d.out(x0, y0, x1 - x0, y1 - y0, round((x1 - x0) * sc), 'flex-shrink: 0; background: #FBF9F4; border: 1px solid #D6CEBF')
 
 
@@ -666,8 +686,9 @@ def node_wicket(sc=150):
     for a, b in [(15.4, WICKET[0]), (WICKET[1], 19.95)]:
         for z in Z_LAG: d.box(X(b), -(z + 0.02), X(a) - X(b), 0.04, C['lag'], C['ink'], 0.5)
         d.box(X(b), -Z_S1, X(a) - X(b), Z_S1 - Z_S0, C['sheet'], op=0.12)
-    x0, x1, z0, z1, _ = SHG_BOX
-    d.box(X(x1), -z1, x1 - x0, z1 - z0, '#F2C230', C['ink'], 0.8); d.t(X(SHG[0]), -(z0 + 0.35), 'ШГ', 10, 'm', C['ink'], True)
+    for s_, (x0, x1, z0, z1, _), _ab in NICHES:                   # шкафы в нишах, попавшие в вид
+        if 15.35 < x0 and x1 < 19.95:
+            d.box(X(x1), -z1, x1 - x0, z1 - z0, '#F2C230' if s_ == 'ШГ' else '#E8E3D6', C['ink'], 0.8); d.t(X((x0 + x1) / 2), -(z0 + 0.35), s_, 10, 'm', C['ink'], True)
     a, b = WICKET[0] + 0.07, WICKET[1] - 0.07                   # полотно 860 × 2 000, рама 40×40
     d.box(X(b), -Z_S1, b - a, Z_S1 - Z_S0, C['sheet'], op=0.2)
     d.box(X(b), -Z_S1, b - a, Z_S1 - Z_S0, 'none', C['wick'], 2.4)
@@ -699,15 +720,15 @@ def node_wicket_plan(sc=150):
     for p in (BYN[8], BYN[9], BYN[10]):
         tp = TYPES[p['t']]
         d.ring(p['x'], FS, blade(p) / 2, tp[5], 0.8, STONE if driven(p['t']) else 'none', '3 2'); d.box(p['x'] - tp[2] / 2, FS - tp[2] / 2, tp[2], tp[2], tp[5])
-    x0b, x1b, _, _, dep = SHG_BOX
-    d.box(x0b, FS + 0.07 - dep, x1b - x0b, dep, '#F2C230', C['ink'], 0.9); d.t(SHG[0], FS - 0.32, 'ШГ', 9.5, 'm', C['ink'], True)
+    kind, (x0b, x1b, _, _, dep), _ab = WICKET_NICHE
+    d.box(x0b, FS + 0.07 - dep, x1b - x0b, dep, '#F2C230' if kind == 'ШГ' else '#E8E3D6', C['ink'], 0.9); d.t((x0b + x1b) / 2, FS - 0.32, kind, 9.5, 'm', C['ink'], True)
     r = WICKET[1] - WICKET[0] - 0.14; hx = WICKET[0] + 0.07
     d.ln(hx, FS, hx, FS - r, 2.4, C['wick'])
     d.add(f'<path d="M {hx + r:.3f} {FS:.3f} A {r:.3f} {r:.3f} 0 0 0 {hx:.3f} {FS - r:.3f}" style="fill:none;stroke:{C["wick"]};stroke-width:1px;vector-effect:non-scaling-stroke;stroke-dasharray:4 3"></path>')
     d.add(f'<path d="M {hx:.3f} {FS - r:.3f} A {r:.3f} {r:.3f} 0 0 0 {hx - r:.3f} {FS:.3f}" style="fill:none;stroke:#B3261E;stroke-width:1px;vector-effect:non-scaling-stroke;stroke-dasharray:2 3"></path>')
     d.box(hx - 0.05, FS - r - 0.1, 0.1, 0.06, C['ink'])
     d.t(hx + 0.08, FS - r - 0.02, 'ограничитель 90° (упор в дорожку)', 9, '', C['ink'], halo=True)
-    d.t(hx - r + 0.05, FS - 0.1, 'без упора полотно ударит в ШГ', 9, '', '#B3261E', halo=True)
+    d.t(hx - r + 0.05, FS - 0.1, f'без упора полотно ударит в {kind}' if WICKET_HITS else f'полотно не достаёт до {kind}', 9, '', '#B3261E' if WICKET_HITS else C['mu'], halo=True)
     d.dimh(x1b, hx, FS + 0.2, mm(hx - x1b), 9, above=False)
     d.t(x0 + 0.05, y0 + 0.2, 'план, калитка открывается внутрь участка', 10, '', C['mu'], True)
     return d.out(x0, y0, x1 - x0, y1 - y0, round((x1 - x0) * sc), 'flex-shrink: 0; background: #FBF9F4; border: 1px solid #D6CEBF')
@@ -761,34 +782,41 @@ GATE_ITEMS = ['Роликовые опоры, 2 шт, на закладной', 
               'Противовес 1 600 (ферма из трубы 60×40)', 'Зубчатая рейка — под привод (опция)']
 
 
-def node_niches(sc=130):
-    """У5: ниши ВРУ и ШГ в пролётах 7–8 и 8–9 — вид с улицы."""
-    d = D(sc); xa, xb = 12.75, 18.55
+def node_niches(sc=130, which=None):
+    """У5: ниши шкафов ВРУ и ШГ в линии забора — вид с улицы. which — ниши на одном виде (по умолчанию все)."""
+    ns = [v for v in NICHES if which is None or v[0] in which]
+    posts = sorted({n for v in ns for n in v[2]})
+    last = BYN[posts[-1]]
+    d = D(sc); xa, xb = BYN[posts[0]]['x'] - 0.75, last['x'] + 0.55
     d.box(xa, 0, xb - xa, 2.2, C['soil']); d.ln(xa, 0, xb, 0, 1.3); d.ln(xa, -Z_FRZ, xb, -Z_FRZ, 0.9, C['frz'], '6 4')
-    for n in (7, 8, 9): draw_support(d, BYN[n]['x'], BYN[n]['t'])
-    draw_frame(d, xa, WICKET[0], cut=[(VRU_BOX[0], VRU_BOX[1], VRU_BOX[2], VRU_BOX[3]), (SHG_BOX[0], SHG_BOX[1], SHG_BOX[2], SHG_BOX[3])])
-    for (x0, x1, z0, z1, dep), fill, s in [(VRU_BOX, '#E8E3D6', 'ВРУ'), (SHG_BOX, '#F2C230', 'ШГ')]:
+    for n in posts: draw_support(d, BYN[n]['x'], BYN[n]['t'])
+    draw_frame(d, xa, last['x'] if last['n'] in SPECIAL else xb, cut=[v[1][:4] for v in ns])
+    for s_, (x0, x1, z0, z1, dep), _ab in ns:
+        fill = '#F2C230' if s_ == 'ШГ' else '#E8E3D6'
         for x in (x0 - 0.02, x1 + 0.02): d.box(x - 0.02, -(Z_LAG[1] - 0.02), 0.04, Z_LAG[1] - Z_LAG[0] - 0.04, '#9AA0A4', C['ink'], 0.6)   # стойки 40×40
         for z in (z0 - 0.02, z1 + 0.02): d.box(x0 - 0.04, -(z + 0.02), x1 - x0 + 0.08, 0.04, '#9AA0A4', C['ink'], 0.6)                    # ригели 40×40
         d.box(x0 + 0.01, -z1 + 0.01, x1 - x0 - 0.02, z1 - z0 - 0.02, fill, C['ink'], 1.2)
-        d.t((x0 + x1) / 2, -(z0 + 0.12), s, 11, 'm', C['ink'], True)
-    x0, x1, z0, z1, _ = VRU_BOX
-    d.box(VRU[0] - 0.14, -(z0 + 0.45), 0.28, 0.14, '#FFFFFF', C['ink'], 0.8); d.t(VRU[0], -(z0 + 0.35), 'окно счётчика', 8.5, 'm', C['mu'])
-    d.ln(VRU[0], -z0, VRU[0], 0.7, 2.2, C['el'], '6 3'); d.ring(VRU[0], 0.7, 0.05, C['el'], 1.6, '#FFFFFF')
-    d.t(VRU[0] + 0.1, 0.62, 'кабель в гофре Ø63 до −0,70: с улицы — ввод, в участок — к ЩР-Д', 9, '', C['el'], halo=True)
-    x0, x1, z0, z1, _ = SHG_BOX
-    for k in range(5): d.ln(x0 + 0.12, -(z1 - 0.12 - k * 0.05), x1 - 0.12, -(z1 - 0.12 - k * 0.05), 0.8)
-    for dx in (-0.1, 0.1):
-        d.ln(SHG[0] + dx, -z0, SHG[0] + dx, -G1_DEPTH, 2.4, C['gas']); d.box(SHG[0] + dx - 0.03, -0.25, 0.06, 0.5, 'none', C['ink'], 0.8)
-    d.ring(SHG[0], -G1_DEPTH, 0.05, C['gas'], 1.6, '#FFFFFF')
-    d.t(SHG[0] + 0.18, -G1_DEPTH - 0.1, 'ввод от сети ГРО и выход Г1 на −1,55; футляры на выходе из земли', 9, '', C['gas'], halo=True)
-    d.chainh([13.5, VRU_BOX[0], VRU_BOX[1], 15.75, SHG_BOX[0], SHG_BOX[1], 18.0], -(Z_TOP + 0.25), 9, 18)
-    d.dimh(VRU_BOX[1], SHG_BOX[0], -(Z_TOP + 0.55), f'между шкафами {mm(SHG_BOX[0] - VRU_BOX[1])}', 9)
-    d.dimv(VRU_BOX[0] - 0.12, -VRU_BOX[3], -VRU_BOX[2], '650', 9); d.dimv(VRU_BOX[0] - 0.12, -VRU_BOX[2], 0, '900', 9)
-    d.dimv(SHG_BOX[1] + 0.12, -SHG_BOX[3], -SHG_BOX[2], '800', 9, left=False); d.dimv(SHG_BOX[1] + 0.12, -SHG_BOX[2], 0, '600', 9, left=False)
-    for n in (7, 8, 9): d.tag(BYN[n]['x'], -(Z_TOP + 0.85), str(n), 9, TYPES[BYN[n]['t']][5], 9)
-    for z in (Z_TOP, Z_LAG[1], VRU_BOX[3], SHG_BOX[3], VRU_BOX[2], SHG_BOX[2], Z_LAG[0], 0): d.mark(xa + 0.48, z, zf(z), 9)
-    d.t((xa + xb) / 2, 2.1, 'вид с улицы · шкафы дверцами на улицу, корпус — внутри участка', 10, 'm', C['mu'], True)
+        d.t((x0 + x1) / 2, -(z0 + 0.12), s_, 11, 'm', C['ink'], True)
+        if s_ == 'ВРУ':
+            d.box(VRU[0] - 0.14, -(z0 + 0.45), 0.28, 0.14, '#FFFFFF', C['ink'], 0.8); d.t(VRU[0], -(z0 + 0.35), 'окно счётчика', 8.5, 'm', C['mu'])
+            d.ln(VRU[0], -z0, VRU[0], 0.7, 2.2, C['el'], '6 3'); d.ring(VRU[0], 0.7, 0.05, C['el'], 1.6, '#FFFFFF')
+            d.t(VRU[0] + 0.1, 0.62, 'кабель в гофре Ø63 до −0,70: с улицы — ввод, в участок — к ЩР-Д' if len(ns) > 1 else 'кабель в гофре Ø63 до −0,70', 9, '', C['el'], halo=True)
+            d.dimv(x0 - 0.12, -z1, -z0, '650', 9); d.dimv(x0 - 0.12, -z0, 0, '900', 9)
+        else:
+            for k in range(5): d.ln(x0 + 0.12, -(z1 - 0.12 - k * 0.05), x1 - 0.12, -(z1 - 0.12 - k * 0.05), 0.8)
+            for dx in (-0.1, 0.1):
+                d.ln(SHG[0] + dx, -z0, SHG[0] + dx, -G1_DEPTH, 2.4, C['gas']); d.box(SHG[0] + dx - 0.03, -0.25, 0.06, 0.5, 'none', C['ink'], 0.8)
+            d.ring(SHG[0], -G1_DEPTH, 0.05, C['gas'], 1.6, '#FFFFFF')
+            d.t(SHG[0] + 0.18, -G1_DEPTH - 0.1, 'ввод от сети ГРО и выход Г1 на −1,55; футляры на выходе из земли' if len(ns) > 1 else 'ввод ГРО и Г1, −1,55', 9, '', C['gas'], halo=True)
+            d.dimv(x1 + 0.12, -z1, -z0, '800', 9, left=False); d.dimv(x1 + 0.12, -z0, 0, '600', 9, left=False)
+    d.chainh(sorted([BYN[n]['x'] for n in posts] + [e for v in ns for e in v[1][:2]]), -(Z_TOP + 0.25), 9, 18)
+    if len(ns) > 1 and ADJ:
+        d.dimh(ns[0][1][1], ns[1][1][0], -(Z_TOP + 0.55), f'между шкафами {mm(ns[1][1][0] - ns[0][1][1])}', 9)
+    for n in posts: d.tag(BYN[n]['x'], -(Z_TOP + 0.85), str(n), 9, TYPES[BYN[n]['t']][5], 9)
+    zs = [Z_TOP, Z_LAG[1]] + [v[1][3] for v in ns] + [v[1][2] for v in ns] + [Z_LAG[0], 0]
+    if len(ns) > 1: zs = [Z_TOP, Z_LAG[1], VRU_BOX[3], SHG_BOX[3], VRU_BOX[2], SHG_BOX[2], Z_LAG[0], 0]
+    for z in zs: d.mark(xa + 0.48, z, zf(z), 9)
+    d.t((xa + xb) / 2, 2.1, 'вид с улицы · шкафы дверцами на улицу, корпус — внутри участка' if len(ns) > 1 else 'вид с улицы · дверцей на улицу', 10, 'm', C['mu'], True)
     return d.out(xa, -(Z_TOP + 1.12), xb - xa, Z_TOP + 1.12 + 2.25, round((xb - xa) * sc), 'flex-shrink: 0; background: #FBF9F4; border: 1px solid #D6CEBF')
 
 
@@ -915,12 +943,30 @@ def wind_table():
     return '<table class="tb"><tbody>' + ''.join(f'<tr><td>{a}</td><td class="r">{b}</td></tr>' for a, b in rows) + '</tbody></table>'
 
 
+def _clear(p):
+    return min(poly_d((p['x'], p['y']), pts) - blade(p) / 2 for name, short, pts, z, need, why in UTIL)
+
+
+NEAR_DRV = [p['n'] for p in SUP if driven(p['t']) and _clear(p) < 1.1]      # лунки — ручным ямобуром после шурфа
+NEAR_PILE = [p['n'] for p in SUP if not driven(p['t']) and _clear(p) < 1.1]  # сваи — вручную после шурфа
+def ranges(ns):
+    """[2, 4, 5, 19, 20, 21] → «2, 4, 5, 19–21»"""
+    out, run = [], []
+    for n in ns + [None]:
+        if run and (n is None or n != run[-1] + 1):
+            out.append(f'{run[0]}–{run[-1]}' if len(run) > 2 else ', '.join(map(str, run))); run = []
+        if n is not None: run.append(n)
+    return ', '.join(out)
+
+
+_ut = {r[0]: r[2] for r in util_checks()}
+_cl = [v for k, v in _ut.items() if k.startswith('Кабель ВРУ') or k.startswith('Газопровод')]
 MONTAGE = [
-    '<b>Разбивка.</b> Вызвать трассоискатель, отметить вешками сети у забора: выпуск ЛОС (x = 2,6), кабель ВРУ (x = 14,3), газ (x = 16,875), В1 к соседу (y = 21,0), В1 в баню (0,9 м от правой линии). Вынести ось забора в 0,1 м от границы и все 55 точек по ведомости (лист 02.1).',
-    f'<b>Столбы А и У (49 шт).</b> Подземную часть ({nf(Z_S0 - Z_DRV, 2)} м от низа) заранее покрыть битумной мастикой в 2 слоя. Лунка Ø200 мотобуром на 0,8 м; у сетей (опоры 2, 7, 8, 19, 20) — ручным ямобуром после шурфа до сети.',
+    f'<b>Разбивка.</b> Вызвать трассоискатель, отметить вешками сети у забора: выпуск ЛОС (x = 2,6), кабель ВРУ (x = {nf(VRU[0], 1 if round(VRU[0], 1) == VRU[0] else 3)}), газ (x = {nf(SHG[0], 3 if round(SHG[0], 2) != SHG[0] else 2)}), В1 к соседу (y = 21,0), В1 в баню (0,9 м от правой линии). Вынести ось забора в 0,1 м от границы и все 55 точек по ведомости (лист 02.1).',
+    f'<b>Столбы А и У (49 шт).</b> Подземную часть ({nf(Z_S0 - Z_DRV, 2)} м от низа) заранее покрыть битумной мастикой в 2 слоя. Лунка Ø200 мотобуром на 0,8 м; у сетей (опоры {ranges(NEAR_DRV)}) — ручным ямобуром после шурфа до сети.',
     f'<b>Забивка.</b> Столб поставить в лунку, забить гидромолотом (или кувалдой) через оголовник ещё на {nf(Z_HOLE - Z_DRV, 1)} м — до {zf(Z_DRV)} (верх +2,200 по шнуру). Вертикаль — 3 мм на 2 м, ось вдоль линии ±20 мм, поперёк ±10 мм.',
     '<b>Щебень</b> 20–40 засыпать слоями по 0,2 м, каждый слой трамбовать ручной трамбовкой до отказа, выверяя столб; верх засыпки — вровень с землёй, с уклоном от столба.',
-    '<b>Калитка и ворота (6 свай).</b> Пробное закручивание: момент — по паспорту сваи; вертикальность ±1°. Обрезка по нивелиру: оголовки +0,100, у закладной −0,160; столбы 80×80 — на оголовки, сварка по контуру, верх ворот +2,350. Сваи 9 и у закладной — вручную после шурфа.',
+    f'<b>Калитка и ворота (6 свай).</b> Пробное закручивание: момент — по паспорту сваи; вертикальность ±1°. Обрезка по нивелиру: оголовки +0,100, у закладной −0,160; столбы 80×80 — на оголовки, сварка по контуру, верх ворот +2,350. {("Сваи " + ranges(NEAR_PILE) + " и у закладной") if NEAR_PILE else "Сваи у закладной"} — вручную после шурфа.',
     '<b>Лаги</b> 40×20×1,5 в 2 ряда (+0,450 и +1,850) с уличной стороны столбов, стыки лаг — только на столбах; сварка короткими швами (стенка 1,5 мм — без прожогов), окраска 2 слоя.',
     '<b>Ниши ВРУ и ШГ:</b> обрамление 40×40, шкафы дверцами на улицу; газовый шкаф и врезку делает организация с допуском по ТУ.',
     '<b>Профлист</b> С8 0,4 — саморезами по 6 шт на лист на лагу (через волну, в нижнюю полку), нахлёст в одну волну, П-планка сверху, уголки на углах и по краям ниш.',
@@ -965,9 +1011,10 @@ def boards():
         f'3. <b>Винтовые сваи — только калитка и ворота:</b> СВС-89×2500 под столбы калитки 80×80×3, СВС-108×2500 под столбы ворот и закладную — там нагрузка от полотна и движения. Оголовки на +0,100, у закладной — на −0,160.',
         '4. <b>Лаги 40×20×1,5 и профлист С8 0,4</b> — легче прежних 40×20×2 и С20 0,45; на ветер проходят с запасом (таблица слева). Лист С8 — 1 200 × 2 000, полезная ширина 1,15 м.',
         '5. <b>Разбивка опор</b> — по ведомости с координатами (лист 02.1): на улице пролёты подобраны так, чтобы лунки и сваи не попадали на выпуск ЛОС, кабель ВРУ и газ; на боковых и тыльной сторонах — по 13 пролётов 2 446 мм.',
-        '6. <b>Калитка</b> — между воротами и газовым шкафом (оси 18,0–19,0), напротив дорожки к крыльцу; открывается внутрь, ограничитель 90° не даёт полотну ударить в ШГ.',
+        '6. <b>Калитка</b> — между воротами и газовым шкафом (оси 18,0–19,0), напротив дорожки к крыльцу; открывается внутрь, ограничитель 90° не даёт полотну ударить в ШГ.' if WICKET_HITS and WICKET_NICHE[0] == 'ШГ' else
+        f'6. <b>Калитка</b> — оси 18,0–19,0, правее ниши {WICKET_NICHE[0]}, напротив дорожки к крыльцу; открывается внутрь, ограничитель 90° держит полотно у дорожки.',
         '7. <b>Откатные ворота</b> 4,0 м (оси 26,5–30,5): полотно 4,1 м с противовесом 1,6 м откатывается влево по участку, зона отката 7,5 м до калитки свободна; закладная — на двух сваях, без бетонного ростверка.',
-        '8. <b>ВРУ и ШГ</b> встроены в линию забора: шкафы дверцами на улицу, корпус внутри участка, между шкафами 1,9 м. Кабель и газ выходят в пролётах, в 0,7–1,0 м от лунок и лопастей свай.',
+        f'8. <b>ВРУ и ШГ</b> встроены в линию забора: шкафы дверцами на улицу, корпус внутри участка, между шкафами {nf(NICHE_GAP, 1)} м. Кабель и газ выходят в пролётах, в {nf(min(_cl), 1)}–{nf(max(_cl), 1)} м от лунок и лопастей свай.',
         '9. Глухой забор 2 м по границам с соседями — по ПЗЗ Чеховского г. о. и согласованию с соседями (проверить допустимую высоту).',
     ]) + h2('Спецификация и стоимость', '6px 0 0') + spec_html() + small('Цены ориентировочные: розница Московской обл., сентябрь 2026. Лист С8 — ширина 1,20 м, полезная 1,15 м. Сваи калитки и ворот — с заводским антикоррозийным покрытием и оголовком. Обшивка ворот и калитки — тем же С8 0,4, цена комплектов прежняя.')
     body += row(col(left, 12, 'width: 700px; flex-shrink: 0') + col(right, 12, 'flex-grow: 1; min-width: 0'))
@@ -1002,7 +1049,11 @@ def boards():
     body += col(h2('Узел 4 · откатные ворота на закладной и сваях') + node_gate() +
                 '<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px">' + legend_list(GATE_ITEMS[:4], C['gate']) +
                 legend_list(GATE_ITEMS[4:], C['gate'], 5) + '</div>', 10)
-    body += row(col(h2('Узел 5 · ниши ВРУ и ШГ') + node_niches(), 10, 'flex-shrink: 0') + col(h2('Узел 6 · основания опор') + node_piles(), 10, 'flex-shrink: 0'), 24)
+    if ADJ:
+        body += row(col(h2('Узел 5 · ниши ВРУ и ШГ') + node_niches(), 10, 'flex-shrink: 0') + col(h2('Узел 6 · основания опор') + node_piles(), 10, 'flex-shrink: 0'), 24)
+    else:
+        body += row(''.join(col(h2(f'Узел 5{"а" if k else ""} · ниша {v[0]}, пролёт {v[2][0]}–{v[2][1]}') + node_niches(which=(v[0],)), 10, 'flex-shrink: 0') for k, v in enumerate(NICHES)) +
+                    col(h2('Узел 6 · основания опор') + node_piles(), 10, 'flex-shrink: 0'), 24)
     body += col(h2('Порядок монтажа и допуски') + '<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 24px; font-size: 12.5px; line-height: 1.45">' +
                 ''.join(f'<div>{i}. {t}</div>' for i, t in enumerate(MONTAGE, 1)) + '</div>', 10)
     out['FenceNodes.dc.html'] = page('Забор: узлы', 1440, H['FenceNodes.dc.html'], body)

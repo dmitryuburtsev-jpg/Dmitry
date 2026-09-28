@@ -1,0 +1,147 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-09-28T08:50:55Z"
+  },
+  "title": "Гришино-Модуль 9,9×8,6",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": -400,
+      "y": 0,
+      "w": 1840,
+      "h": 2090,
+      "title": "Генплан"
+    },
+    "Visual.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 1600,
+      "title": "Визуализация"
+    },
+    "Fence.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 1440,
+      "h": 2220,
+      "title": "Забор из профлиста С8"
+    },
+    "FencePlan.dc.html": {
+      "x": 0,
+      "y": 2340,
+      "w": 1440,
+      "h": 3270,
+      "title": "Забор: план опор"
+    },
+    "FenceElev.dc.html": {
+      "x": 1520,
+      "y": 2340,
+      "w": 1440,
+      "h": 2280,
+      "title": "Забор: развёртки"
+    },
+    "FenceNodes.dc.html": {
+      "x": 3040,
+      "y": 2340,
+      "w": 1440,
+      "h": 3710,
+      "title": "Забор: узлы"
+    },
+    "Sewer.dc.html": {
+      "x": 0,
+      "y": 6170,
+      "w": 1440,
+      "h": 1780,
+      "title": "Канализация"
+    },
+    "Water.dc.html": {
+      "x": 1520,
+      "y": 6170,
+      "w": 1440,
+      "h": 1840,
+      "title": "Скважина и септик"
+    },
+    "Power.dc.html": {
+      "x": 3040,
+      "y": 6170,
+      "w": 1440,
+      "h": 1520,
+      "title": "Электроснабжение"
+    },
+    "Budget.dc.html": {
+      "x": 0,
+      "y": 8130,
+      "w": 1440,
+      "h": 1030,
+      "title": "Сводная смета"
+    },
+    "Gazebo.dc.html": {
+      "x": 1520,
+      "y": 8130,
+      "w": 1440,
+      "h": 2680,
+      "title": "Беседка 5×4"
+    },
+    "House.dc.html": {
+      "x": 3040,
+      "y": 8130,
+      "w": 1440,
+      "h": 1950,
+      "title": "Дом модульный 9,9×8,6"
+    },
+    "Bath.dc.html": {
+      "x": 0,
+      "y": 10930,
+      "w": 1440,
+      "h": 1900,
+      "title": "Баня 5,7×6"
+    },
+    "Gas.dc.html": {
+      "x": 1520,
+      "y": 10930,
+      "w": 1440,
+      "h": 3520,
+      "title": "Газоснабжение"
+    },
+    "Check.dc.html": {
+      "x": 3040,
+      "y": 10930,
+      "w": 1440,
+      "h": 1230,
+      "title": "Проверка сетей"
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Visual.dc.html",
+    "Fence.dc.html",
+    "FencePlan.dc.html",
+    "FenceElev.dc.html",
+    "FenceNodes.dc.html",
+    "Sewer.dc.html",
+    "Water.dc.html",
+    "Power.dc.html",
+    "Budget.dc.html",
+    "Gazebo.dc.html",
+    "House.dc.html",
+    "Bath.dc.html",
+    "Gas.dc.html",
+    "Check.dc.html"
+  ],
+  "notes": {
+    "title": {
+      "kind": "title1",
+      "maxW": 4480,
+      "text": "Гришино-Модуль 9,9×8,6 — первый проект: модульный дом 9,9×8,6 (3 модуля), терраса в сад, вход от калитки; баня, генплан, сети, газ, смета",
+      "w": 240,
+      "x": -400,
+      "y": -300
+    }
+  },
+  "designSystems": []
+}
