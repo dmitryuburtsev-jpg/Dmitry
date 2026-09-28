@@ -53,7 +53,7 @@ s.rect(*GAZ_STEPS, 'bld2')
 s.rect(*MANGAL, 'mang'); s.rect(*MANGAL_TABLE, 'mtbl')
 mx, my, mw, mh = MANGAL
 s.add(f'<rect class="fire" x="{mx-FIRE:.3f}" y="{my-FIRE:.3f}" width="{mw+2*FIRE:.3f}" height="{mh+2*FIRE:.3f}" rx="{FIRE}" ry="{FIRE}"></rect>')
-s.text(mx + mw/2 - 0.3, MANGAL_PAD[1] + 0.85, '13 · Мангал', 'tl mid'); s.text(mx + mw/2, MANGAL_PAD[1] + 1.55, 'брусчатка 4,4×5,4', 'ts mid mu')
+s.text(mx + mw/2 - 0.3, MANGAL_PAD[1] + 0.85, '13 · Мангал', 'tb3 mid'); s.text(mx + mw/2, MANGAL_PAD[1] + 1.55, 'брусчатка 4,4×5,4', 'ts mid mu')
 s.text(mx + mw/2, my + mh + FIRE - 0.25, '5 м от очага', 'ts mid firec', style='font-size: .42px')
 s.rect(*SHED, 'bld2'); s.text(4.3, 2.05, '4 · Хозблок', 'tl mid'); s.text(4.3, 2.85, '6,0×2,3', 'ts mid mu')
 # скважина, ЛОС, колодцы
@@ -91,7 +91,7 @@ s.dim(3.7, 32, 3.7, 30.5, '1,5'); s.dim(0, 6.3, GAZEBO[0], 6.3, fmt(GAZEBO[0], 1
 s.dim(14.4, Y1, 14.4, 0, '15,0'); 
 s.dim(12.4, GAZEBO[1], 12.4, 0, fmt(GAZEBO[1], 1))
 s.dim(GAZ_STEPS[0] + GAZ_STEPS[2], 4.7, MANGAL[0], 4.7, fmt(MANGAL[0] - GAZ_STEPS[0] - GAZ_STEPS[2], 1)); s.dim(MANGAL[0] + MANGAL[2], 4.7, BATH[0], 4.7, fmt(MG['баня стена'], 1))
-s.dim(21.4, MANGAL[1], 21.4, 0, fmt(MG['граница'], 1)); s.dim(0, 2.7, 1, 2.7, '1,0'); s.dim(2.2, 1, 2.2, 0, '1,0')
+s.dim(22.3, MANGAL[1], 22.3, 0, fmt(MG['граница'], 1)); s.dim(0, 2.7, 1, 2.7, '1,0'); s.dim(2.2, 1, 2.2, 0, '1,0')
 s.dim(29.8, 32, 29.8, 21, '11,0'); s.dim(0, 29.9, 2, 29.9, '2,0'); s.dim(25, 32, 25, 7.5, '24,5')
 s.dim(14.9, Y3, 14.9, KK['КК-4'][1], '3,3'); s.dim(11.3, Y2, 11.3, Y3, '9,0'); s.dim(11.3, Y1, 11.3, Y2, '2,0'); s.dim(HX0, 26.9, HX1, 26.9, '6,0')
 s.line(HX1, Y1, BATH_TER[0], BATH_TER[1]+BATH_TER[3], 'chk'); s.text(21.3, 11.6, '9,1', 'td chkc')
